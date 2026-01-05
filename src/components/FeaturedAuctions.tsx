@@ -9,23 +9,23 @@ const FeaturedAuctions = () => {
   const featuredCars = cars.slice(0, 10);
 
   return (
-    <section className="py-20 bg-gradient-dark">
+    <section className="py-20 bg-secondary/30">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
           <div>
-            <span className="text-primary font-medium text-sm uppercase tracking-wider">
+            <span className="inline-block bg-primary/10 text-primary font-semibold text-sm uppercase tracking-wider px-4 py-2 rounded-full">
               Latest Listings
             </span>
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-              Featured <span className="text-gradient-gold">Auctions</span>
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-4">
+              Featured <span className="text-primary">Auctions</span>
             </h2>
             <p className="text-muted-foreground mt-3 max-w-xl">
               Browse our latest vehicles from Johannesburg. Running cars and salvage deals available.
             </p>
           </div>
           <Link to="/auctions">
-            <Button variant="gold-outline" className="group">
+            <Button variant="green-outline" className="group">
               View All {cars.length} Cars
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Button>

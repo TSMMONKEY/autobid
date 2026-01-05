@@ -34,12 +34,12 @@ const CarDetail = () => {
   if (!car) {
     return (
       <Layout>
-        <div className="pt-28 pb-16 min-h-screen flex items-center justify-center">
+        <div className="pt-24 pb-16 min-h-screen flex items-center justify-center">
           <div className="text-center">
             <h1 className="font-display text-3xl font-bold text-foreground mb-4">
               Car Not Found
             </h1>
-            <Button variant="gold" onClick={() => navigate("/auctions")}>
+            <Button variant="green" onClick={() => navigate("/auctions")}>
               Browse All Auctions
             </Button>
           </div>
@@ -83,15 +83,15 @@ const CarDetail = () => {
   const getConditionColor = () => {
     switch (car.condition) {
       case "excellent":
-        return "bg-green-500/20 text-green-400 border-green-500/50";
+        return "bg-green-500/20 text-green-700 border-green-500/50";
       case "good":
-        return "bg-blue-500/20 text-blue-400 border-blue-500/50";
+        return "bg-blue-500/20 text-blue-700 border-blue-500/50";
       case "fair":
-        return "bg-yellow-500/20 text-yellow-400 border-yellow-500/50";
+        return "bg-yellow-500/20 text-yellow-700 border-yellow-500/50";
       case "crashed":
-        return "bg-orange-500/20 text-orange-400 border-orange-500/50";
+        return "bg-orange-500/20 text-orange-700 border-orange-500/50";
       case "salvage":
-        return "bg-red-500/20 text-red-400 border-red-500/50";
+        return "bg-red-500/20 text-red-700 border-red-500/50";
     }
   };
 
@@ -109,14 +109,14 @@ const CarDetail = () => {
   return (
     <>
       <Helmet>
-        <title>{`${car.year} ${car.make} ${car.model} | AutoElite Auction`}</title>
+        <title>{`${car.year} ${car.make} ${car.model} | AutoBid SA Auction`}</title>
         <meta
           name="description"
           content={`Bid on this ${car.year} ${car.make} ${car.model}. ${car.description}`}
         />
       </Helmet>
       <Layout>
-        <div className="pt-24 pb-16 min-h-screen">
+        <div className="pt-20 pb-16 min-h-screen">
           <div className="container mx-auto px-4">
             {/* Back Button */}
             <Button
@@ -130,9 +130,9 @@ const CarDetail = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Main Content */}
-              <div className="lg:col-span-2 space-y-8">
+              <div className="lg:col-span-2 space-y-6">
                 {/* Image */}
-                <div className="relative rounded-2xl overflow-hidden">
+                <div className="relative rounded-xl overflow-hidden shadow-card">
                   <img
                     src={car.image}
                     alt={`${car.year} ${car.make} ${car.model}`}
@@ -157,7 +157,7 @@ const CarDetail = () => {
                 {/* Title & Actions */}
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                   <div>
-                    <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground">
+                    <h1 className="font-display text-2xl md:text-3xl font-bold text-foreground">
                       {car.year} {car.make} {car.model}
                     </h1>
                     <div className="flex items-center gap-3 mt-2">
@@ -183,9 +183,9 @@ const CarDetail = () => {
                 {/* Condition Warning */}
                 {isCrashed && (
                   <div className="bg-orange-500/10 border border-orange-500/30 rounded-xl p-4 flex items-start gap-3">
-                    <AlertTriangle className="w-6 h-6 text-orange-400 flex-shrink-0 mt-0.5" />
+                    <AlertTriangle className="w-6 h-6 text-orange-600 flex-shrink-0 mt-0.5" />
                     <div>
-                      <h3 className="font-semibold text-orange-400 mb-1">
+                      <h3 className="font-semibold text-orange-700 mb-1">
                         {car.condition === "crashed" ? "Accident Damaged Vehicle" : "Salvage Title Vehicle"}
                       </h3>
                       <p className="text-sm text-muted-foreground">
@@ -197,7 +197,7 @@ const CarDetail = () => {
                 )}
 
                 {/* Description */}
-                <div className="bg-card rounded-2xl p-6 border border-border">
+                <div className="bg-card rounded-xl p-6 border border-border shadow-card">
                   <h2 className="font-display text-xl font-semibold text-foreground mb-4">
                     Description
                   </h2>
@@ -207,7 +207,7 @@ const CarDetail = () => {
                 </div>
 
                 {/* Specifications */}
-                <div className="bg-card rounded-2xl p-6 border border-border">
+                <div className="bg-card rounded-xl p-6 border border-border shadow-card">
                   <h2 className="font-display text-xl font-semibold text-foreground mb-6">
                     Specifications
                   </h2>
@@ -233,13 +233,13 @@ const CarDetail = () => {
 
               {/* Sidebar - Bidding */}
               <div className="lg:col-span-1">
-                <div className="sticky top-28 bg-card rounded-2xl p-6 border border-border shadow-card">
+                <div className="sticky top-24 bg-card rounded-xl p-6 border border-border shadow-card">
                   {/* Current Bid */}
                   <div className="text-center mb-6 pb-6 border-b border-border">
                     <p className="text-sm text-muted-foreground mb-1">
                       Current Bid
                     </p>
-                    <p className="font-display text-4xl font-bold text-gradient-gold">
+                    <p className="font-display text-3xl font-bold text-primary">
                       {formatPrice(car.currentBid)}
                     </p>
                     <p className="text-sm text-muted-foreground mt-2">
@@ -275,7 +275,7 @@ const CarDetail = () => {
                       </div>
                     </div>
                     <Button
-                      variant="gold"
+                      variant="green"
                       size="lg"
                       className="w-full"
                       onClick={handlePlaceBid}

@@ -3,9 +3,10 @@ import { useState, useEffect } from "react";
 interface CountdownTimerProps {
   endTime: Date;
   variant?: "default" | "large";
+  compact?: boolean;
 }
 
-const CountdownTimer = ({ endTime, variant = "default" }: CountdownTimerProps) => {
+const CountdownTimer = ({ endTime, variant = "default", compact = false }: CountdownTimerProps) => {
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -58,6 +59,15 @@ const CountdownTimer = ({ endTime, variant = "default" }: CountdownTimerProps) =
           </div>
         ))}
       </div>
+    );
+  }
+
+  if (compact) {
+    return (
+      <span className="font-mono text-xs font-semibold text-foreground">
+        {timeLeft.days > 0 && `${timeLeft.days}d `}
+        {pad(timeLeft.hours)}:{pad(timeLeft.minutes)}
+      </span>
     );
   }
 

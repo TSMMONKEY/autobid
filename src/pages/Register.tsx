@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Gavel, Mail, Lock, User, Eye, EyeOff, Phone } from "lucide-react";
+import { Car, Mail, Lock, User, Eye, EyeOff, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Register = () => {
@@ -42,7 +42,7 @@ const Register = () => {
     setTimeout(() => {
       toast({
         title: "Account created!",
-        description: "Welcome to AutoElite. Start bidding on your dream car.",
+        description: "Welcome to AutoBid SA. Start bidding on your next vehicle.",
       });
       setIsLoading(false);
       navigate("/");
@@ -52,27 +52,27 @@ const Register = () => {
   return (
     <>
       <Helmet>
-        <title>Create Account | AutoElite - Premium Car Auctions</title>
+        <title>Create Account | AutoBid SA - Car Auctions</title>
         <meta
           name="description"
-          content="Create your AutoElite account to start bidding on luxury and exotic car auctions."
+          content="Create your AutoBid SA account to start bidding on car auctions in Johannesburg."
         />
       </Helmet>
       <div className="min-h-screen bg-background flex">
         {/* Left Side - Image */}
         <div className="hidden lg:block flex-1 relative">
           <img
-            src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=1200"
-            alt="Luxury car"
+            src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=1200"
+            alt="Cars for auction"
             className="absolute inset-0 w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-l from-background via-background/50 to-transparent" />
           <div className="absolute bottom-16 right-16 max-w-md text-right">
-            <h2 className="font-display text-4xl font-bold text-foreground mb-4">
-              Join the Elite
+            <h2 className="font-display text-3xl font-bold text-foreground mb-4">
+              Join AutoBid SA
             </h2>
             <p className="text-muted-foreground">
-              Access exclusive auctions, place bids, and drive home in the car of your dreams.
+              Access hundreds of vehicles at auction prices. Cars and taxis available in Johannesburg.
             </p>
           </div>
         </div>
@@ -82,10 +82,15 @@ const Register = () => {
           <div className="w-full max-w-md">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2 mb-12">
-              <Gavel className="w-8 h-8 text-primary" />
-              <span className="font-display text-2xl font-bold text-gradient-gold">
-                AutoElite
-              </span>
+              <div className="w-10 h-10 bg-gradient-green rounded-lg flex items-center justify-center">
+                <Car className="w-6 h-6 text-primary-foreground" />
+              </div>
+              <div className="flex flex-col">
+                <span className="font-display text-xl font-bold text-foreground">
+                  Auto<span className="text-primary">Bid</span>
+                </span>
+                <span className="text-xs text-muted-foreground -mt-1">South Africa</span>
+              </div>
             </Link>
 
             {/* Header */}
@@ -94,7 +99,7 @@ const Register = () => {
                 Create Account
               </h1>
               <p className="text-muted-foreground">
-                Join the world's premier car auction platform
+                Join our car auction platform today
               </p>
             </div>
 
@@ -161,7 +166,7 @@ const Register = () => {
                   <Input
                     type="tel"
                     name="phone"
-                    placeholder="+1 (555) 000-0000"
+                    placeholder="+27 82 000 0000"
                     value={formData.phone}
                     onChange={handleChange}
                     className="pl-12 h-12"
@@ -237,7 +242,7 @@ const Register = () => {
 
               <Button
                 type="submit"
-                variant="gold"
+                variant="green"
                 size="lg"
                 className="w-full"
                 disabled={isLoading}

@@ -56,17 +56,17 @@ const SellYourCar = () => {
   const benefits = [
     {
       icon: Users,
-      title: "Reach 50,000+ Buyers",
-      description: "Access our network of verified collectors and enthusiasts.",
+      title: "Reach 10,000+ Buyers",
+      description: "Access our network of verified buyers across Johannesburg.",
     },
     {
       icon: TrendingUp,
-      title: "Best Market Prices",
-      description: "Competitive bidding ensures you get top dollar for your car.",
+      title: "Competitive Prices",
+      description: "Competitive bidding ensures you get fair market value.",
     },
     {
       icon: Shield,
-      title: "Secure Transactions",
+      title: "Secure Process",
       description: "Protected payments and verified buyers for peace of mind.",
     },
     {
@@ -85,7 +85,7 @@ const SellYourCar = () => {
     {
       icon: Camera,
       title: "Photo Review",
-      description: "We'll guide you through capturing the perfect photos.",
+      description: "We'll guide you through capturing the right photos.",
     },
     {
       icon: CheckCircle,
@@ -102,33 +102,33 @@ const SellYourCar = () => {
   return (
     <>
       <Helmet>
-        <title>Sell Your Car | AutoElite - Premium Car Auctions</title>
+        <title>Sell Your Car | AutoBid SA - Car Auctions Johannesburg</title>
         <meta
           name="description"
-          content="Sell your luxury or exotic car at AutoElite auctions. Reach 50,000+ verified buyers and get the best price for your vehicle."
+          content="Sell your car at AutoBid SA auctions. Reach buyers in Johannesburg and get the best price for your vehicle."
         />
       </Helmet>
       <Layout>
-        <div className="pt-28 pb-16">
+        <div className="pt-24 pb-16">
           {/* Hero */}
           <section className="container mx-auto px-4 mb-20">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
-                <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-6">
-                  Sell Your <span className="text-gradient-gold">Luxury Car</span>
+                <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-6">
+                  Sell Your <span className="text-primary">Car</span>
                 </h1>
                 <p className="text-muted-foreground text-lg mb-8">
-                  Join thousands of sellers who have successfully sold their
-                  vehicles through AutoElite. Our platform connects you with serious
-                  buyers who appreciate exceptional automobiles.
+                  Join sellers who have successfully sold their
+                  vehicles through AutoBid SA. Our platform connects you with serious
+                  buyers across Johannesburg and South Africa.
                 </p>
                 <div className="grid grid-cols-2 gap-6">
                   {[
-                    { value: "2,500+", label: "Cars Sold" },
-                    { value: "$850M+", label: "Total Sales" },
+                    { value: "1,500+", label: "Cars Sold" },
+                    { value: "R50M+", label: "Total Sales" },
                   ].map((stat, index) => (
                     <div key={index}>
-                      <p className="font-display text-3xl font-bold text-gradient-gold">
+                      <p className="font-display text-3xl font-bold text-primary">
                         {stat.value}
                       </p>
                       <p className="text-muted-foreground text-sm">{stat.label}</p>
@@ -137,21 +137,21 @@ const SellYourCar = () => {
                 </div>
               </div>
               <div className="relative">
-                <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-transparent blur-2xl rounded-3xl" />
+                <div className="absolute -inset-4 bg-gradient-to-r from-primary/10 to-transparent blur-2xl rounded-3xl" />
                 <img
-                  src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800"
-                  alt="Luxury car for sale"
-                  className="relative rounded-2xl shadow-elevated"
+                  src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800"
+                  alt="Car for sale"
+                  className="relative rounded-xl shadow-elevated"
                 />
               </div>
             </div>
           </section>
 
           {/* Benefits */}
-          <section className="bg-card py-16 mb-20">
+          <section className="bg-secondary/30 py-16 mb-20">
             <div className="container mx-auto px-4">
-              <h2 className="font-display text-3xl font-bold text-foreground text-center mb-12">
-                Why Sell With <span className="text-gradient-gold">AutoElite</span>
+              <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground text-center mb-12">
+                Why Sell With <span className="text-primary">AutoBid SA</span>
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 {benefits.map((benefit, index) => (
@@ -160,10 +160,10 @@ const SellYourCar = () => {
                     className="text-center p-6 animate-fade-in"
                     style={{ animationDelay: `${index * 0.1}s` }}
                   >
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary to-[hsl(28,90%,45%)] flex items-center justify-center mx-auto mb-4 shadow-gold">
+                    <div className="w-14 h-14 rounded-full bg-gradient-green flex items-center justify-center mx-auto mb-4 shadow-green">
                       <benefit.icon className="w-7 h-7 text-primary-foreground" />
                     </div>
-                    <h3 className="font-display text-xl font-semibold text-foreground mb-2">
+                    <h3 className="font-display text-lg font-semibold text-foreground mb-2">
                       {benefit.title}
                     </h3>
                     <p className="text-muted-foreground text-sm">
@@ -177,8 +177,8 @@ const SellYourCar = () => {
 
           {/* Process */}
           <section className="container mx-auto px-4 mb-20">
-            <h2 className="font-display text-3xl font-bold text-foreground text-center mb-12">
-              Simple <span className="text-gradient-gold">4-Step Process</span>
+            <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground text-center mb-12">
+              Simple <span className="text-primary">4-Step Process</span>
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
               {process.map((step, index) => (
@@ -204,7 +204,7 @@ const SellYourCar = () => {
 
           {/* Form */}
           <section className="container mx-auto px-4">
-            <div className="max-w-2xl mx-auto bg-card rounded-2xl p-8 border border-border shadow-card">
+            <div className="max-w-2xl mx-auto bg-card rounded-xl p-8 border border-border shadow-card">
               <h2 className="font-display text-2xl font-bold text-foreground text-center mb-2">
                 Get Started
               </h2>
@@ -248,7 +248,7 @@ const SellYourCar = () => {
                   <Input
                     name="phone"
                     type="tel"
-                    placeholder="+1 (555) 000-0000"
+                    placeholder="+27 82 000 0000"
                     value={formData.phone}
                     onChange={handleChange}
                     required
@@ -262,7 +262,7 @@ const SellYourCar = () => {
                     </label>
                     <Input
                       name="carMake"
-                      placeholder="Porsche"
+                      placeholder="Toyota"
                       value={formData.carMake}
                       onChange={handleChange}
                       required
@@ -274,7 +274,7 @@ const SellYourCar = () => {
                     </label>
                     <Input
                       name="carModel"
-                      placeholder="911 Turbo S"
+                      placeholder="Corolla"
                       value={formData.carModel}
                       onChange={handleChange}
                       required
@@ -286,7 +286,7 @@ const SellYourCar = () => {
                     </label>
                     <Input
                       name="carYear"
-                      placeholder="2023"
+                      placeholder="2020"
                       value={formData.carYear}
                       onChange={handleChange}
                       required
@@ -300,7 +300,7 @@ const SellYourCar = () => {
                   </label>
                   <Input
                     name="mileage"
-                    placeholder="5,000 miles"
+                    placeholder="50,000 km"
                     value={formData.mileage}
                     onChange={handleChange}
                     required
@@ -313,14 +313,14 @@ const SellYourCar = () => {
                   </label>
                   <Textarea
                     name="description"
-                    placeholder="Tell us about your vehicle's condition, modifications, history, etc."
+                    placeholder="Tell us about your vehicle's condition, any damage, service history, etc."
                     value={formData.description}
                     onChange={handleChange}
                     rows={4}
                   />
                 </div>
 
-                <Button variant="gold" size="lg" className="w-full">
+                <Button variant="green" size="lg" className="w-full">
                   Submit for Review
                 </Button>
               </form>
