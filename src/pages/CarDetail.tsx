@@ -21,6 +21,7 @@ import {
   Heart,
   Share2,
   Gavel,
+  AlertTriangle,
 } from "lucide-react";
 
 const CarDetail = () => {
@@ -48,15 +49,15 @@ const CarDetail = () => {
   }
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat("en-ZA", {
       style: "currency",
-      currency: "USD",
+      currency: "ZAR",
       maximumFractionDigits: 0,
     }).format(price);
   };
 
   const formatMileage = (mileage: number) => {
-    return new Intl.NumberFormat("en-US").format(mileage);
+    return new Intl.NumberFormat("en-ZA").format(mileage);
   };
 
   const handlePlaceBid = () => {
@@ -76,11 +77,27 @@ const CarDetail = () => {
     }
   };
 
-  const minNextBid = car.currentBid + 1000;
+  const minNextBid = car.currentBid + 500;
+  const isCrashed = car.condition === "crashed" || car.condition === "salvage";
+
+  const getConditionColor = () => {
+    switch (car.condition) {
+      case "excellent":
+        return "bg-green-500/20 text-green-400 border-green-500/50";
+      case "good":
+        return "bg-blue-500/20 text-blue-400 border-blue-500/50";
+      case "fair":
+        return "bg-yellow-500/20 text-yellow-400 border-yellow-500/50";
+      case "crashed":
+        return "bg-orange-500/20 text-orange-400 border-orange-500/50";
+      case "salvage":
+        return "bg-red-500/20 text-red-400 border-red-500/50";
+    }
+  };
 
   const specs = [
     { icon: Calendar, label: "Year", value: car.year.toString() },
-    { icon: Gauge, label: "Mileage", value: `${formatMileage(car.mileage)} mi` },
+    { icon: Gauge, label: "Mileage", value: `${formatMileage(car.mileage)} km` },
     { icon: Settings, label: "Transmission", value: car.transmission },
     { icon: Fuel, label: "Engine", value: car.engine },
     { icon: Palette, label: "Exterior", value: car.exterior },
@@ -128,9 +145,10 @@ const CarDetail = () => {
                         LIVE
                       </Badge>
                     )}
-                    {car.isFeatured && (
-                      <Badge className="bg-primary text-primary-foreground">
-                        Featured
+                    {isCrashed && (
+                      <Badge className="bg-orange-500 text-white">
+                        <AlertTriangle className="w-3 h-3 mr-1" />
+                        {car.condition.toUpperCase()}
                       </Badge>
                     )}
                   </div>
@@ -142,10 +160,15 @@ const CarDetail = () => {
                     <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground">
                       {car.year} {car.make} {car.model}
                     </h1>
-                    <p className="text-muted-foreground flex items-center gap-2 mt-2">
-                      <MapPin className="w-4 h-4" />
-                      {car.location}
-                    </p>
+                    <div className="flex items-center gap-3 mt-2">
+                      <p className="text-muted-foreground flex items-center gap-2">
+                        <MapPin className="w-4 h-4" />
+                        {car.location}
+                      </p>
+                      <span className={`px-3 py-1 rounded-full border text-sm capitalize ${getConditionColor()}`}>
+                        {car.condition}
+                      </span>
+                    </div>
                   </div>
                   <div className="flex gap-2">
                     <Button variant="outline" size="icon">
@@ -156,6 +179,22 @@ const CarDetail = () => {
                     </Button>
                   </div>
                 </div>
+
+                {/* Condition Warning */}
+                {isCrashed && (
+                  <div className="bg-orange-500/10 border border-orange-500/30 rounded-xl p-4 flex items-start gap-3">
+                    <AlertTriangle className="w-6 h-6 text-orange-400 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h3 className="font-semibold text-orange-400 mb-1">
+                        {car.condition === "crashed" ? "Accident Damaged Vehicle" : "Salvage Title Vehicle"}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        This vehicle has been in an accident and may require significant repairs. 
+                        Sold as-is. Inspection recommended before bidding.
+                      </p>
+                    </div>
+                  </div>
+                )}
 
                 {/* Description */}
                 <div className="bg-card rounded-2xl p-6 border border-border">
@@ -224,7 +263,7 @@ const CarDetail = () => {
                       </label>
                       <div className="relative">
                         <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
-                          $
+                          R
                         </span>
                         <Input
                           type="text"

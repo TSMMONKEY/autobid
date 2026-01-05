@@ -4,12 +4,12 @@ import { ArrowRight, Play } from "lucide-react";
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0">
         <img
-          src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=1920"
-          alt="Luxury car"
+          src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=1920"
+          alt="Car auction"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-background/50" />
@@ -22,23 +22,23 @@ const HeroSection = () => {
           <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/30 rounded-full px-4 py-2 mb-8 animate-fade-in">
             <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
             <span className="text-sm text-primary font-medium">
-              Live Auctions Happening Now
+              320+ Cars Available Now in Johannesburg
             </span>
           </div>
 
-          <h1 className="font-display text-5xl md:text-7xl font-bold text-foreground leading-tight mb-6 animate-fade-in" style={{ animationDelay: "0.1s" }}>
-            Discover <span className="text-gradient-gold">Extraordinary</span> Automobiles
+          <h1 className="font-display text-4xl md:text-6xl font-bold text-foreground leading-tight mb-6 animate-fade-in" style={{ animationDelay: "0.1s" }}>
+            Joburg's Premier <span className="text-gradient-gold">Car Auction</span> Platform
           </h1>
 
-          <p className="text-xl text-muted-foreground mb-10 max-w-2xl animate-fade-in" style={{ animationDelay: "0.2s" }}>
-            The world's premier online auction platform for luxury, exotic, and collector cars. 
-            Bid on exceptional vehicles from the comfort of your home.
+          <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl animate-fade-in" style={{ animationDelay: "0.2s" }}>
+            Find affordable Toyota, VW, Ford, Nissan and more. Running vehicles and salvage deals 
+            available. Bid from Sandton, Soweto, Randburg and beyond.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 animate-fade-in" style={{ animationDelay: "0.3s" }}>
             <Link to="/auctions">
               <Button variant="gold" size="xl" className="group">
-                Browse Auctions
+                Browse All Cars
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
@@ -51,27 +51,20 @@ const HeroSection = () => {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-8 mt-16 pt-8 border-t border-border/50 animate-fade-in" style={{ animationDelay: "0.4s" }}>
+          <div className="grid grid-cols-3 gap-8 mt-14 pt-8 border-t border-border/50 animate-fade-in" style={{ animationDelay: "0.4s" }}>
             {[
-              { value: "2,500+", label: "Cars Sold" },
-              { value: "$850M+", label: "Total Sales" },
-              { value: "50K+", label: "Active Bidders" },
+              { value: "320+", label: "Cars Available" },
+              { value: "16", label: "Pages of Listings" },
+              { value: "JHB", label: "Based" },
             ].map((stat, index) => (
               <div key={index}>
-                <p className="font-display text-3xl md:text-4xl font-bold text-gradient-gold">
+                <p className="font-display text-2xl md:text-3xl font-bold text-gradient-gold">
                   {stat.value}
                 </p>
                 <p className="text-muted-foreground text-sm mt-1">{stat.label}</p>
               </div>
             ))}
           </div>
-        </div>
-      </div>
-
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <div className="w-6 h-10 border-2 border-muted-foreground/50 rounded-full flex items-start justify-center p-2">
-          <div className="w-1.5 h-3 bg-primary rounded-full" />
         </div>
       </div>
     </section>

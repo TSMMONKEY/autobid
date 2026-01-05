@@ -17,6 +17,7 @@ export interface Car {
   bidCount: number;
   isLive: boolean;
   isFeatured: boolean;
+  condition: "excellent" | "good" | "fair" | "crashed" | "salvage";
 }
 
 const getEndTime = (hoursFromNow: number) => {
@@ -25,329 +26,232 @@ const getEndTime = (hoursFromNow: number) => {
   return date;
 };
 
-export const cars: Car[] = [
-  {
-    id: "1",
-    make: "Porsche",
-    model: "911 Turbo S",
-    year: 2023,
-    currentBid: 245000,
-    endTime: getEndTime(2),
-    image: "https://images.unsplash.com/photo-1614162692292-7ac56d7f373e?w=800",
-    mileage: 1200,
-    location: "Miami, FL",
-    transmission: "PDK Automatic",
-    engine: "3.8L Twin-Turbo Flat-6",
-    exterior: "GT Silver Metallic",
-    interior: "Black Leather",
-    vin: "WP0AD2A95PS123456",
-    description: "Pristine 2023 Porsche 911 Turbo S with Sport Chrono package, carbon ceramic brakes, and full leather interior.",
-    bidCount: 47,
-    isLive: true,
-    isFeatured: true,
-  },
-  {
-    id: "2",
-    make: "Ferrari",
-    model: "F8 Tributo",
-    year: 2022,
-    currentBid: 328000,
-    endTime: getEndTime(4),
-    image: "https://images.unsplash.com/photo-1592198084033-aade902d1aae?w=800",
-    mileage: 3400,
-    location: "Los Angeles, CA",
-    transmission: "7-Speed Dual-Clutch",
-    engine: "3.9L Twin-Turbo V8",
-    exterior: "Rosso Corsa",
-    interior: "Nero Leather",
-    vin: "ZFF92LLA5N0267890",
-    description: "Stunning Ferrari F8 Tributo in classic Rosso Corsa. Equipped with carbon fiber racing seats and Assetto Fiorano package.",
-    bidCount: 62,
-    isLive: true,
-    isFeatured: true,
-  },
-  {
-    id: "3",
-    make: "Lamborghini",
-    model: "Huracán EVO",
-    year: 2021,
-    currentBid: 289000,
-    endTime: getEndTime(6),
-    image: "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800",
-    mileage: 5600,
-    location: "Las Vegas, NV",
-    transmission: "7-Speed LDF",
-    engine: "5.2L V10",
-    exterior: "Verde Mantis",
-    interior: "Nero Ade",
-    vin: "ZHWUT4ZF7MLA12345",
-    description: "Head-turning Lamborghini Huracán EVO in Verde Mantis. Features lifting system and Sensonum sound system.",
-    bidCount: 38,
-    isLive: true,
-    isFeatured: true,
-  },
-  {
-    id: "4",
-    make: "McLaren",
-    model: "720S Spider",
-    year: 2022,
-    currentBid: 312000,
-    endTime: getEndTime(8),
-    image: "https://images.unsplash.com/photo-1621135802920-133df287f89c?w=800",
-    mileage: 2100,
-    location: "Scottsdale, AZ",
-    transmission: "7-Speed SSG",
-    engine: "4.0L Twin-Turbo V8",
-    exterior: "Papaya Spark",
-    interior: "Carbon Black",
-    vin: "SBM14DCA2NW123456",
-    description: "Breathtaking McLaren 720S Spider with MSO options. Retractable hardtop and electrochromic roof.",
-    bidCount: 55,
-    isLive: true,
-    isFeatured: false,
-  },
-  {
-    id: "5",
-    make: "Aston Martin",
-    model: "DB11 V12",
-    year: 2021,
-    currentBid: 178000,
-    endTime: getEndTime(12),
-    image: "https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=800",
-    mileage: 8900,
-    location: "Greenwich, CT",
-    transmission: "8-Speed Automatic",
-    engine: "5.2L Twin-Turbo V12",
-    exterior: "Lunar White",
-    interior: "Obsidian Black",
-    vin: "SCFRMFAW5MGN12345",
-    description: "Elegant Aston Martin DB11 V12 with Bang & Olufsen sound system and premium leather throughout.",
-    bidCount: 29,
-    isLive: false,
-    isFeatured: false,
-  },
-  {
-    id: "6",
-    make: "Bentley",
-    model: "Continental GT",
-    year: 2023,
-    currentBid: 225000,
-    endTime: getEndTime(18),
-    image: "https://images.unsplash.com/photo-1563720360172-67b8f3dce741?w=800",
-    mileage: 1800,
-    location: "Beverly Hills, CA",
-    transmission: "8-Speed Dual-Clutch",
-    engine: "6.0L W12",
-    exterior: "Beluga Black",
-    interior: "Linen",
-    vin: "SCBCG2ZG5PC123456",
-    description: "Luxurious Bentley Continental GT with Mulliner driving specification. Diamond-quilted seats and rotating display.",
-    bidCount: 41,
-    isLive: false,
-    isFeatured: true,
-  },
-  {
-    id: "7",
-    make: "Mercedes-AMG",
-    model: "GT Black Series",
-    year: 2022,
-    currentBid: 425000,
-    endTime: getEndTime(24),
-    image: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800",
-    mileage: 890,
-    location: "New York, NY",
-    transmission: "7-Speed AMG DCT",
-    engine: "4.0L Twin-Turbo V8",
-    exterior: "Magno Grey",
-    interior: "Black Nappa",
-    vin: "WDDYJ7KA2NA123456",
-    description: "Rare Mercedes-AMG GT Black Series with Track Package. Active aerodynamics and adjustable coilover suspension.",
-    bidCount: 73,
-    isLive: false,
-    isFeatured: true,
-  },
-  {
-    id: "8",
-    make: "BMW",
-    model: "M8 Competition",
-    year: 2023,
-    currentBid: 145000,
-    endTime: getEndTime(36),
-    image: "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=800",
-    mileage: 3200,
-    location: "Chicago, IL",
-    transmission: "8-Speed M Steptronic",
-    engine: "4.4L Twin-Turbo V8",
-    exterior: "Frozen Black",
-    interior: "Silverstone",
-    vin: "WBSGV0C05PCZ12345",
-    description: "Powerful BMW M8 Competition Coupe with M Carbon exterior package and Executive Package.",
-    bidCount: 34,
-    isLive: false,
-    isFeatured: false,
-  },
-  {
-    id: "9",
-    make: "Rolls-Royce",
-    model: "Ghost",
-    year: 2022,
-    currentBid: 365000,
-    endTime: getEndTime(48),
-    image: "https://images.unsplash.com/photo-1631295868223-63265b40d9e4?w=800",
-    mileage: 4500,
-    location: "Palm Beach, FL",
-    transmission: "8-Speed ZF",
-    engine: "6.75L Twin-Turbo V12",
-    exterior: "English White",
-    interior: "Navy Blue",
-    vin: "SCA664S58NUX12345",
-    description: "Majestic Rolls-Royce Ghost with Starlight Headliner and bespoke audio system.",
-    bidCount: 28,
-    isLive: false,
-    isFeatured: false,
-  },
-  {
-    id: "10",
-    make: "Audi",
-    model: "RS e-tron GT",
-    year: 2023,
-    currentBid: 158000,
-    endTime: getEndTime(72),
-    image: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800",
-    mileage: 2800,
-    location: "San Francisco, CA",
-    transmission: "2-Speed Automatic",
-    engine: "Dual Electric Motors",
-    exterior: "Daytona Grey",
-    interior: "Black Valcona",
-    vin: "WUAESFF15PN123456",
-    description: "All-electric Audi RS e-tron GT with 637 hp. Carbon roof and Matrix LED headlights.",
-    bidCount: 45,
-    isLive: false,
-    isFeatured: false,
-  },
-  {
-    id: "11",
-    make: "Chevrolet",
-    model: "Corvette Z06",
-    year: 2024,
-    currentBid: 142000,
-    endTime: getEndTime(96),
-    image: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800",
-    mileage: 450,
-    location: "Detroit, MI",
-    transmission: "8-Speed DCT",
-    engine: "5.5L Flat-Plane V8",
-    exterior: "Torch Red",
-    interior: "Jet Black",
-    vin: "1G1YB3D47P5123456",
-    description: "Brand new C8 Corvette Z06 with Z07 Performance Package. Carbon fiber wheels and Brembo brakes.",
-    bidCount: 67,
-    isLive: false,
-    isFeatured: false,
-  },
-  {
-    id: "12",
-    make: "Ford",
-    model: "GT Heritage Edition",
-    year: 2022,
-    currentBid: 785000,
-    endTime: getEndTime(120),
-    image: "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800",
-    mileage: 320,
-    location: "Dallas, TX",
-    transmission: "7-Speed Dual-Clutch",
-    engine: "3.5L EcoBoost V6",
-    exterior: "Heritage Blue",
-    interior: "Ebony Alcantara",
-    vin: "2FAGP9CW5NH123456",
-    description: "Extremely rare Ford GT Heritage Edition. Gulf livery inspired design with exposed carbon fiber.",
-    bidCount: 89,
-    isLive: false,
-    isFeatured: true,
-  },
-  {
-    id: "13",
-    make: "Nissan",
-    model: "GT-R Nismo",
-    year: 2022,
-    currentBid: 215000,
-    endTime: getEndTime(144),
-    image: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800",
-    mileage: 1600,
-    location: "Seattle, WA",
-    transmission: "6-Speed Dual-Clutch",
-    engine: "3.8L Twin-Turbo V6",
-    exterior: "Bayside Blue",
-    interior: "Black/Red Recaro",
-    vin: "JN1TBNT30Z0123456",
-    description: "Legendary Nissan GT-R Nismo with hand-built engine. Titanium exhaust and carbon aero package.",
-    bidCount: 52,
-    isLive: false,
-    isFeatured: false,
-  },
-  {
-    id: "14",
-    make: "Maserati",
-    model: "MC20",
-    year: 2023,
-    currentBid: 268000,
-    endTime: getEndTime(168),
-    image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800",
-    mileage: 980,
-    location: "Miami, FL",
-    transmission: "8-Speed DCT",
-    engine: "3.0L Twin-Turbo V6",
-    exterior: "Bianco Audace",
-    interior: "Nero",
-    vin: "ZAMMAV00X00123456",
-    description: "Stunning Maserati MC20 supercar with Nettuno engine. Butterfly doors and carbon fiber monocoque.",
-    bidCount: 36,
-    isLive: false,
-    isFeatured: false,
-  },
-  {
-    id: "15",
-    make: "Lexus",
-    model: "LFA",
-    year: 2012,
-    currentBid: 895000,
-    endTime: getEndTime(192),
-    image: "https://images.unsplash.com/photo-1542362567-b07e54358753?w=800",
-    mileage: 2400,
-    location: "Houston, TX",
-    transmission: "6-Speed ASG",
-    engine: "4.8L V10",
-    exterior: "Pearl White",
-    interior: "Black Alcantara",
-    vin: "JTHHP5BC3C0000123",
-    description: "Collector-grade Lexus LFA. One of only 500 produced worldwide. Yamaha-tuned V10 with 9,000 rpm redline.",
-    bidCount: 94,
-    isLive: false,
-    isFeatured: true,
-  },
-  {
-    id: "16",
-    make: "Pagani",
-    model: "Huayra Roadster",
-    year: 2019,
-    currentBid: 3250000,
-    endTime: getEndTime(240),
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800",
-    mileage: 1200,
-    location: "Monaco",
-    transmission: "7-Speed AMT",
-    engine: "6.0L Twin-Turbo V12",
-    exterior: "Carbon Blue",
-    interior: "Tan Leather",
-    vin: "ZA9H21AS9KSF12345",
-    description: "Masterpiece Pagani Huayra Roadster. Hand-crafted in Italy with bespoke interior. One of 100 ever made.",
-    bidCount: 112,
-    isLive: false,
-    isFeatured: true,
-  },
+const carImages = {
+  crashed: [
+    "https://images.unsplash.com/photo-1591768793355-74d04bb6608f?w=600",
+    "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=600",
+    "https://images.unsplash.com/photo-1581235720704-06d3acfcb36f?w=600",
+  ],
+  normal: [
+    "https://images.unsplash.com/photo-1590362891991-f776e747a588?w=600",
+    "https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=600",
+    "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=600",
+    "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=600",
+    "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=600",
+    "https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=600",
+    "https://images.unsplash.com/photo-1542362567-b07e54358753?w=600",
+    "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600",
+    "https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=600",
+    "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=600",
+    "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=600",
+    "https://images.unsplash.com/photo-1571607388263-1044f9ea01dd?w=600",
+    "https://images.unsplash.com/photo-1616422285623-13ff0162193c?w=600",
+    "https://images.unsplash.com/photo-1619682817481-e994891cd1f5?w=600",
+    "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=600",
+  ],
+};
+
+const locations = [
+  "Sandton, JHB",
+  "Soweto, JHB",
+  "Randburg, JHB",
+  "Midrand, JHB",
+  "Roodepoort, JHB",
+  "Centurion, PTA",
+  "Pretoria CBD",
+  "Boksburg, EKU",
+  "Benoni, EKU",
+  "Alberton, JHB",
+  "Kempton Park",
+  "Germiston, EKU",
+  "Vereeniging",
+  "Krugersdorp",
+  "Springs, EKU",
 ];
+
+const exteriorColors = ["White", "Silver", "Black", "Grey", "Blue", "Red", "Brown", "Beige", "Green"];
+const interiorColors = ["Black Cloth", "Grey Cloth", "Beige Cloth", "Black Leather", "Grey Leather"];
+const transmissions = ["Manual", "Automatic", "CVT", "Semi-Auto"];
+
+const carModels = [
+  // Toyota
+  { make: "Toyota", model: "Corolla Quest", engines: ["1.6L Petrol", "1.8L Petrol"] },
+  { make: "Toyota", model: "Hilux", engines: ["2.4L Diesel", "2.8L Diesel", "2.7L Petrol"] },
+  { make: "Toyota", model: "Fortuner", engines: ["2.4L Diesel", "2.8L Diesel"] },
+  { make: "Toyota", model: "Quantum", engines: ["2.5L Diesel", "2.7L Petrol"] },
+  { make: "Toyota", model: "Yaris", engines: ["1.0L Petrol", "1.5L Petrol"] },
+  { make: "Toyota", model: "RAV4", engines: ["2.0L Petrol", "2.5L Hybrid"] },
+  { make: "Toyota", model: "Etios", engines: ["1.5L Petrol"] },
+  { make: "Toyota", model: "Avanza", engines: ["1.3L Petrol", "1.5L Petrol"] },
+  // Volkswagen
+  { make: "Volkswagen", model: "Polo", engines: ["1.0L TSI", "1.4L Petrol", "1.6L Petrol"] },
+  { make: "Volkswagen", model: "Polo Vivo", engines: ["1.4L Petrol", "1.6L Petrol"] },
+  { make: "Volkswagen", model: "Golf 7", engines: ["1.4L TSI", "2.0L TSI", "2.0L TDI"] },
+  { make: "Volkswagen", model: "Tiguan", engines: ["1.4L TSI", "2.0L TSI", "2.0L TDI"] },
+  { make: "Volkswagen", model: "Amarok", engines: ["2.0L TDI", "3.0L V6 TDI"] },
+  // Ford
+  { make: "Ford", model: "Ranger", engines: ["2.2L TDCi", "3.2L TDCi", "2.0L Bi-Turbo"] },
+  { make: "Ford", model: "EcoSport", engines: ["1.0L EcoBoost", "1.5L Petrol"] },
+  { make: "Ford", model: "Figo", engines: ["1.4L Petrol", "1.5L TDCi"] },
+  { make: "Ford", model: "Fiesta", engines: ["1.0L EcoBoost", "1.4L Petrol"] },
+  // Nissan
+  { make: "Nissan", model: "NP200", engines: ["1.6L Petrol"] },
+  { make: "Nissan", model: "NP300 Hardbody", engines: ["2.0L Petrol", "2.4L Petrol", "2.5L Diesel"] },
+  { make: "Nissan", model: "Navara", engines: ["2.3L dCi", "2.5L dCi"] },
+  { make: "Nissan", model: "Almera", engines: ["1.5L Petrol"] },
+  { make: "Nissan", model: "Micra", engines: ["1.2L Petrol", "0.9L Turbo"] },
+  { make: "Nissan", model: "X-Trail", engines: ["2.0L Petrol", "2.5L Petrol"] },
+  // Hyundai
+  { make: "Hyundai", model: "i20", engines: ["1.2L Petrol", "1.4L Petrol"] },
+  { make: "Hyundai", model: "Grand i10", engines: ["1.0L Petrol", "1.2L Petrol"] },
+  { make: "Hyundai", model: "Tucson", engines: ["2.0L Petrol", "2.0L CRDi"] },
+  { make: "Hyundai", model: "Creta", engines: ["1.5L Petrol", "1.5L CRDi"] },
+  { make: "Hyundai", model: "Accent", engines: ["1.6L Petrol"] },
+  { make: "Hyundai", model: "H100", engines: ["2.6L Diesel"] },
+  // Kia
+  { make: "Kia", model: "Picanto", engines: ["1.0L Petrol", "1.2L Petrol"] },
+  { make: "Kia", model: "Rio", engines: ["1.2L Petrol", "1.4L Petrol"] },
+  { make: "Kia", model: "Seltos", engines: ["1.5L Petrol", "1.5L CRDi"] },
+  { make: "Kia", model: "Sportage", engines: ["2.0L Petrol", "2.0L CRDi"] },
+  // Mazda
+  { make: "Mazda", model: "Mazda3", engines: ["1.5L Petrol", "2.0L Petrol"] },
+  { make: "Mazda", model: "CX-5", engines: ["2.0L Petrol", "2.5L Petrol", "2.2L Diesel"] },
+  { make: "Mazda", model: "CX-3", engines: ["2.0L Petrol"] },
+  // Honda
+  { make: "Honda", model: "Fit", engines: ["1.5L Petrol"] },
+  { make: "Honda", model: "Ballade", engines: ["1.5L Petrol"] },
+  { make: "Honda", model: "BR-V", engines: ["1.5L Petrol"] },
+  { make: "Honda", model: "HR-V", engines: ["1.5L Petrol", "1.8L Petrol"] },
+  // Renault
+  { make: "Renault", model: "Kwid", engines: ["1.0L Petrol"] },
+  { make: "Renault", model: "Sandero", engines: ["0.9L Turbo", "1.6L Petrol"] },
+  { make: "Renault", model: "Duster", engines: ["1.5L dCi", "1.6L Petrol"] },
+  { make: "Renault", model: "Clio", engines: ["0.9L Turbo", "1.2L Petrol"] },
+  // Suzuki
+  { make: "Suzuki", model: "Swift", engines: ["1.2L Petrol"] },
+  { make: "Suzuki", model: "Jimny", engines: ["1.5L Petrol"] },
+  { make: "Suzuki", model: "Vitara Brezza", engines: ["1.5L Petrol"] },
+  { make: "Suzuki", model: "Baleno", engines: ["1.4L Petrol"] },
+  // Isuzu
+  { make: "Isuzu", model: "D-Max", engines: ["1.9L ddi", "3.0L ddi"] },
+  { make: "Isuzu", model: "KB Series", engines: ["2.5L Diesel", "3.0L Diesel"] },
+  // Chevrolet
+  { make: "Chevrolet", model: "Spark", engines: ["1.0L Petrol", "1.2L Petrol"] },
+  { make: "Chevrolet", model: "Aveo", engines: ["1.4L Petrol", "1.6L Petrol"] },
+  { make: "Chevrolet", model: "Utility", engines: ["1.4L Petrol", "1.8L Petrol"] },
+  // Opel
+  { make: "Opel", model: "Corsa", engines: ["1.0L Turbo", "1.4L Petrol"] },
+  { make: "Opel", model: "Astra", engines: ["1.4L Turbo", "1.6L Petrol"] },
+  // Haval
+  { make: "Haval", model: "H2", engines: ["1.5L Turbo"] },
+  { make: "Haval", model: "Jolion", engines: ["1.5L Turbo"] },
+  // BAIC
+  { make: "BAIC", model: "D20", engines: ["1.3L Petrol", "1.5L Petrol"] },
+  // Chery
+  { make: "Chery", model: "Tiggo 4 Pro", engines: ["1.5L Turbo"] },
+  // Mahindra
+  { make: "Mahindra", model: "Pik Up", engines: ["2.2L mHawk Diesel"] },
+  { make: "Mahindra", model: "Scorpio", engines: ["2.2L mHawk Diesel"] },
+];
+
+const conditions: Array<{ condition: Car["condition"]; weight: number }> = [
+  { condition: "excellent", weight: 15 },
+  { condition: "good", weight: 35 },
+  { condition: "fair", weight: 25 },
+  { condition: "crashed", weight: 15 },
+  { condition: "salvage", weight: 10 },
+];
+
+const getRandomCondition = (): Car["condition"] => {
+  const totalWeight = conditions.reduce((sum, c) => sum + c.weight, 0);
+  let random = Math.random() * totalWeight;
+  for (const c of conditions) {
+    random -= c.weight;
+    if (random <= 0) return c.condition;
+  }
+  return "good";
+};
+
+const getConditionDescription = (condition: Car["condition"]): string => {
+  switch (condition) {
+    case "excellent":
+      return "Excellent condition, well maintained with full service history.";
+    case "good":
+      return "Good running condition, minor wear and tear.";
+    case "fair":
+      return "Fair condition, some mechanical issues, sold as-is.";
+    case "crashed":
+      return "Accident damaged, repairable. Good for parts or rebuild.";
+    case "salvage":
+      return "Salvage title, extensive damage. Ideal for parts.";
+  }
+};
+
+const generateVIN = (): string => {
+  const chars = "ABCDEFGHJKLMNPRSTUVWXYZ0123456789";
+  let vin = "";
+  for (let i = 0; i < 17; i++) {
+    vin += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return vin;
+};
+
+const generateCars = (count: number): Car[] => {
+  const generatedCars: Car[] = [];
+  
+  for (let i = 0; i < count; i++) {
+    const carModel = carModels[Math.floor(Math.random() * carModels.length)];
+    const condition = getRandomCondition();
+    const isCrashed = condition === "crashed" || condition === "salvage";
+    const year = 2010 + Math.floor(Math.random() * 15); // 2010-2024
+    const baseMileage = (2024 - year) * 15000 + Math.floor(Math.random() * 30000);
+    
+    // Price based on condition and age
+    let basePrice = 50000 + Math.floor(Math.random() * 200000);
+    if (condition === "crashed") basePrice *= 0.4;
+    if (condition === "salvage") basePrice *= 0.25;
+    if (condition === "fair") basePrice *= 0.7;
+    if (condition === "excellent") basePrice *= 1.2;
+    basePrice = Math.round(basePrice / 1000) * 1000;
+
+    const isLive = i < 8 && Math.random() > 0.5;
+    const isFeatured = Math.random() > 0.85;
+
+    const imageIndex = isCrashed 
+      ? Math.floor(Math.random() * carImages.crashed.length)
+      : Math.floor(Math.random() * carImages.normal.length);
+
+    generatedCars.push({
+      id: (i + 1).toString(),
+      make: carModel.make,
+      model: carModel.model,
+      year,
+      currentBid: basePrice,
+      endTime: getEndTime(Math.floor(Math.random() * 240) + 1),
+      image: isCrashed ? carImages.crashed[imageIndex] : carImages.normal[imageIndex],
+      mileage: baseMileage,
+      location: locations[Math.floor(Math.random() * locations.length)],
+      transmission: transmissions[Math.floor(Math.random() * transmissions.length)],
+      engine: carModel.engines[Math.floor(Math.random() * carModel.engines.length)],
+      exterior: exteriorColors[Math.floor(Math.random() * exteriorColors.length)],
+      interior: interiorColors[Math.floor(Math.random() * interiorColors.length)],
+      vin: generateVIN(),
+      description: `${year} ${carModel.make} ${carModel.model}. ${getConditionDescription(condition)} Located in ${locations[Math.floor(Math.random() * locations.length)]}.`,
+      bidCount: Math.floor(Math.random() * 50) + 1,
+      isLive,
+      isFeatured,
+      condition,
+    });
+  }
+
+  return generatedCars;
+};
+
+// Generate 320 cars (16 pages x 20 cars per page)
+export const cars: Car[] = generateCars(320);
 
 export const getLiveCars = () => cars.filter(car => car.isLive);
 export const getFeaturedCars = () => cars.filter(car => car.isFeatured);
 export const getCarById = (id: string) => cars.find(car => car.id === id);
+export const getCrashedCars = () => cars.filter(car => car.condition === "crashed" || car.condition === "salvage");
+export const getGoodCars = () => cars.filter(car => car.condition === "excellent" || car.condition === "good");
