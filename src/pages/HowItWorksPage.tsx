@@ -24,9 +24,9 @@ const HowItWorksPage = () => {
     },
     {
       icon: Search,
-      title: "Discover Your Dream Car",
+      title: "Find Your Vehicle",
       description:
-        "Browse our curated collection of luxury, exotic, and collector vehicles. Use filters to find the perfect match for your preferences and budget.",
+        "Browse our inventory of cars and taxis. Use filters to find vehicles by make, condition, price, and location in Johannesburg.",
     },
     {
       icon: Gavel,
@@ -36,9 +36,9 @@ const HowItWorksPage = () => {
     },
     {
       icon: Truck,
-      title: "Secure Delivery",
+      title: "Collect or Deliver",
       description:
-        "Once you win, complete your purchase securely. We'll coordinate safe transport and delivery of your new vehicle to your desired location.",
+        "Once you win, complete your purchase securely. Collect from our yard or arrange delivery to your location across South Africa.",
     },
   ];
 
@@ -47,47 +47,47 @@ const HowItWorksPage = () => {
       icon: Shield,
       title: "Verified Vehicles",
       description:
-        "Every vehicle undergoes thorough inspection and verification before listing.",
+        "Every vehicle is inspected and condition reports provided before listing.",
     },
     {
       icon: CreditCard,
       title: "Secure Payments",
       description:
-        "Protected transactions with escrow service for buyer and seller confidence.",
+        "Pay via EFT or bank deposit with secure transaction handling.",
     },
     {
       icon: Clock,
-      title: "24/7 Support",
+      title: "Support Available",
       description:
-        "Our dedicated team is available around the clock to assist you.",
+        "Our team is available during business hours to assist you.",
     },
     {
       icon: Award,
-      title: "Quality Guarantee",
+      title: "Transparent Process",
       description:
-        "All listings must meet our strict quality standards before going live.",
+        "Clear pricing with all fees shown upfront. No hidden costs.",
     },
   ];
 
   return (
     <>
       <Helmet>
-        <title>How It Works | AutoElite - Premium Car Auctions</title>
+        <title>How It Works | AutoBid SA - Car Auctions</title>
         <meta
           name="description"
-          content="Learn how to buy luxury and exotic cars at AutoElite auctions. Simple process from registration to delivery."
+          content="Learn how to buy cars at AutoBid SA auctions. Simple process from registration to delivery."
         />
       </Helmet>
       <Layout>
-        <div className="pt-28 pb-16">
+        <div className="pt-24 pb-16">
           {/* Hero */}
           <section className="container mx-auto px-4 text-center mb-20">
-            <h1 className="font-display text-4xl md:text-6xl font-bold text-foreground mb-6">
-              How <span className="text-gradient-gold">It Works</span>
+            <h1 className="font-display text-3xl md:text-5xl font-bold text-foreground mb-6">
+              How <span className="text-primary">It Works</span>
             </h1>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Buying your dream car has never been easier. Follow our simple
-              four-step process to join the elite world of automotive collecting.
+              Buying your next vehicle has never been easier. Follow our simple
+              four-step process to purchase cars at auction prices.
             </p>
           </section>
 
@@ -97,11 +97,11 @@ const HowItWorksPage = () => {
               {steps.map((step, index) => (
                 <div
                   key={index}
-                  className="relative bg-card rounded-2xl p-8 border border-border hover:border-primary/50 transition-all duration-300 animate-fade-in"
+                  className="relative bg-card rounded-xl p-8 border border-border hover:border-primary/50 transition-all duration-300 animate-fade-in shadow-card"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   {/* Step Number */}
-                  <div className="absolute -top-4 -left-4 w-10 h-10 bg-gradient-to-br from-primary to-[hsl(28,90%,45%)] rounded-full flex items-center justify-center font-bold text-primary-foreground text-lg shadow-gold">
+                  <div className="absolute -top-4 -left-4 w-10 h-10 bg-gradient-green rounded-full flex items-center justify-center font-bold text-primary-foreground text-lg shadow-green">
                     {index + 1}
                   </div>
 
@@ -110,7 +110,7 @@ const HowItWorksPage = () => {
                       <step.icon className="w-8 h-8 text-primary" />
                     </div>
                     <div>
-                      <h3 className="font-display text-2xl font-semibold text-foreground mb-3">
+                      <h3 className="font-display text-xl font-semibold text-foreground mb-3">
                         {step.title}
                       </h3>
                       <p className="text-muted-foreground leading-relaxed">
@@ -124,14 +124,14 @@ const HowItWorksPage = () => {
           </section>
 
           {/* Benefits */}
-          <section className="bg-card py-20 mb-20">
+          <section className="bg-secondary/30 py-20 mb-20">
             <div className="container mx-auto px-4">
               <div className="text-center mb-12">
                 <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Why Choose <span className="text-gradient-gold">AutoElite</span>
+                  Why Choose <span className="text-primary">AutoBid SA</span>
                 </h2>
                 <p className="text-muted-foreground max-w-xl mx-auto">
-                  We provide a premium auction experience with unmatched service and security.
+                  We provide a transparent auction experience with reliable service and security.
                 </p>
               </div>
 
@@ -142,7 +142,7 @@ const HowItWorksPage = () => {
                     className="text-center p-6 animate-fade-in"
                     style={{ animationDelay: `${index * 0.1}s` }}
                   >
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary to-[hsl(28,90%,45%)] flex items-center justify-center mx-auto mb-4 shadow-gold">
+                    <div className="w-14 h-14 rounded-full bg-gradient-green flex items-center justify-center mx-auto mb-4 shadow-green">
                       <benefit.icon className="w-7 h-7 text-primary-foreground" />
                     </div>
                     <h3 className="font-display text-xl font-semibold text-foreground mb-2">
@@ -159,23 +159,23 @@ const HowItWorksPage = () => {
 
           {/* CTA */}
           <section className="container mx-auto px-4 text-center">
-            <div className="bg-gradient-to-br from-secondary to-card rounded-3xl p-12 border border-border">
-              <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
+            <div className="bg-card rounded-2xl p-12 border border-border shadow-card">
+              <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground mb-4">
                 Ready to Start Bidding?
               </h2>
               <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
-                Create your free account today and join thousands of collectors
-                bidding on the world's finest automobiles.
+                Create your free account today and browse hundreds of vehicles
+                available at auction in Johannesburg.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link to="/register">
-                  <Button variant="gold" size="xl" className="group">
+                  <Button variant="green" size="lg" className="group">
                     Create Account
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </Link>
                 <Link to="/auctions">
-                  <Button variant="glass" size="xl">
+                  <Button variant="outline" size="lg">
                     Browse Auctions
                   </Button>
                 </Link>

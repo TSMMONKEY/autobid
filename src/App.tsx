@@ -12,6 +12,8 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import HowItWorksPage from "./pages/HowItWorksPage";
 import SellYourCar from "./pages/SellYourCar";
+import Taxis from "./pages/Taxis";
+import TaxiDetail from "./pages/TaxiDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +30,8 @@ const App = () => (
             <Route path="/auctions" element={<Auctions />} />
             <Route path="/live" element={<LiveAuctions />} />
             <Route path="/car/:id" element={<CarDetail />} />
+            <Route path="/taxis" element={<Taxis />} />
+            <Route path="/taxi/:id" element={<TaxiDetail />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/how-it-works" element={<HowItWorksPage />} />

@@ -84,19 +84,19 @@ const Auctions = () => {
   return (
     <>
       <Helmet>
-        <title>All Auctions | AutoElite - Car Auctions Johannesburg</title>
+        <title>All Auctions | AutoBid SA - Car Auctions Johannesburg</title>
         <meta
           name="description"
           content="Browse car auctions in Johannesburg. Find Toyota, VW, Ford, Nissan and more. Crashed and running vehicles available."
         />
       </Helmet>
       <Layout>
-        <div className="pt-28 pb-16 min-h-screen">
+        <div className="pt-24 pb-16 min-h-screen">
           <div className="container mx-auto px-4">
             {/* Header */}
             <div className="mb-8">
-              <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4">
-                All <span className="text-gradient-gold">Auctions</span>
+              <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
+                All <span className="text-primary">Auctions</span>
               </h1>
               <p className="text-muted-foreground max-w-2xl">
                 Browse {cars.length} vehicles from Johannesburg and surrounding areas. 
@@ -120,7 +120,7 @@ const Auctions = () => {
                   />
                 </div>
                 <Button
-                  variant={showFilters ? "gold" : "outline"}
+                  variant={showFilters ? "green" : "outline"}
                   onClick={() => setShowFilters(!showFilters)}
                   className="h-12"
                 >
@@ -131,7 +131,7 @@ const Auctions = () => {
 
               {/* Filter Panel */}
               {showFilters && (
-                <div className="bg-card rounded-xl p-6 border border-border mb-6 animate-fade-in">
+                <div className="bg-card rounded-xl p-6 border border-border mb-6 animate-fade-in shadow-card">
                   <div className="flex items-center justify-between mb-6">
                     <h3 className="font-display text-lg font-semibold">
                       Filter Results
@@ -152,7 +152,7 @@ const Auctions = () => {
                         {makes.slice(0, 12).map((make) => (
                           <Button
                             key={make}
-                            variant={selectedMake === make ? "gold" : "outline"}
+                            variant={selectedMake === make ? "green" : "outline"}
                             size="sm"
                             onClick={() => {
                               setSelectedMake(selectedMake === make ? null : make);
@@ -174,7 +174,7 @@ const Auctions = () => {
                         {conditions.map((condition) => (
                           <Button
                             key={condition}
-                            variant={selectedCondition === condition ? "gold" : "outline"}
+                            variant={selectedCondition === condition ? "green" : "outline"}
                             size="sm"
                             onClick={() => {
                               setSelectedCondition(selectedCondition === condition ? null : condition);
@@ -193,12 +193,12 @@ const Auctions = () => {
 
               {/* Results count & Page info */}
               <div className="flex items-center justify-between">
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   Showing <span className="text-foreground font-semibold">
                     {(currentPage - 1) * CARS_PER_PAGE + 1}-{Math.min(currentPage * CARS_PER_PAGE, filteredCars.length)}
                   </span> of <span className="text-foreground font-semibold">{filteredCars.length}</span> vehicles
                 </p>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   Page <span className="text-foreground font-semibold">{currentPage}</span> of <span className="text-foreground font-semibold">{totalPages}</span>
                 </p>
               </div>
@@ -223,7 +223,7 @@ const Auctions = () => {
                 <p className="text-muted-foreground text-lg">
                   No vehicles found matching your criteria.
                 </p>
-                <Button variant="gold" className="mt-4" onClick={clearFilters}>
+                <Button variant="green" className="mt-4" onClick={clearFilters}>
                   Clear Filters
                 </Button>
               </div>
@@ -245,7 +245,7 @@ const Auctions = () => {
                   typeof page === "number" ? (
                     <Button
                       key={index}
-                      variant={currentPage === page ? "gold" : "outline"}
+                      variant={currentPage === page ? "green" : "outline"}
                       size="sm"
                       onClick={() => goToPage(page)}
                       className="min-w-[40px]"

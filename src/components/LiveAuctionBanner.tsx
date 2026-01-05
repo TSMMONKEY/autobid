@@ -11,23 +11,23 @@ const LiveAuctionBanner = () => {
   if (!featuredLive) return null;
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat("en-ZA", {
       style: "currency",
-      currency: "USD",
+      currency: "ZAR",
       maximumFractionDigits: 0,
     }).format(price);
   };
 
   return (
-    <section className="py-16 relative overflow-hidden">
+    <section className="py-16 relative overflow-hidden bg-card">
       {/* Background */}
       <div className="absolute inset-0">
         <img
           src={featuredLive.image}
           alt="Live auction"
-          className="w-full h-full object-cover opacity-30"
+          className="w-full h-full object-cover opacity-10"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/95 to-background/80" />
+        <div className="absolute inset-0 bg-gradient-to-r from-card via-card/95 to-card/80" />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
@@ -52,7 +52,7 @@ const LiveAuctionBanner = () => {
             <div className="flex flex-wrap items-center gap-8 mb-8">
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Current Bid</p>
-                <p className="font-display text-4xl font-bold text-gradient-gold">
+                <p className="font-display text-4xl font-bold text-primary">
                   {formatPrice(featuredLive.currentBid)}
                 </p>
               </div>
@@ -64,13 +64,13 @@ const LiveAuctionBanner = () => {
 
             <div className="flex gap-4">
               <Link to={`/car/${featuredLive.id}`}>
-                <Button variant="gold" size="lg" className="group animate-glow">
+                <Button variant="green" size="lg" className="group">
                   Place Bid Now
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
               <Link to="/live">
-                <Button variant="glass" size="lg">
+                <Button variant="outline" size="lg">
                   View All Live ({liveCars.length})
                 </Button>
               </Link>
@@ -80,7 +80,7 @@ const LiveAuctionBanner = () => {
           {/* Image */}
           <div className="flex-1 hidden lg:block">
             <div className="relative">
-              <div className="absolute -inset-4 bg-gradient-gold opacity-20 blur-2xl rounded-full" />
+              <div className="absolute -inset-4 bg-primary/20 blur-2xl rounded-full" />
               <img
                 src={featuredLive.image}
                 alt={`${featuredLive.make} ${featuredLive.model}`}
