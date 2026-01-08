@@ -14,6 +14,7 @@ import HowItWorksPage from "./pages/HowItWorksPage";
 import SellYourCar from "./pages/SellYourCar";
 import Taxis from "./pages/Taxis";
 import TaxiDetail from "./pages/TaxiDetail";
+import AddCar from "./pages/AddCar";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
             <Route path="/register" element={<Register />} />
             <Route path="/how-it-works" element={<HowItWorksPage />} />
             <Route path="/sell" element={<SellYourCar />} />
+            <Route path="/admin/add-car" element={<AddCar />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

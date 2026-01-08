@@ -6,6 +6,7 @@ export interface Car {
   currentBid: number;
   endTime: Date;
   image: string;
+  images: string[]; // Multiple images for carousel
   mileage: number;
   location: string;
   transmission: string;
@@ -221,6 +222,25 @@ const generateCars = (count: number): Car[] => {
       ? Math.floor(Math.random() * carImages.crashed.length)
       : Math.floor(Math.random() * carImages.normal.length);
 
+    // Generate 3-5 random images for carousel
+    const numImages = 3 + Math.floor(Math.random() * 3);
+    const imagePool = isCrashed ? carImages.crashed : carImages.normal;
+    const carImageSet: string[] = [];
+    const usedIndices = new Set<number>();
+    
+    // Add primary image first
+    carImageSet.push(imagePool[imageIndex]);
+    usedIndices.add(imageIndex);
+    
+    // Add additional random images
+    while (carImageSet.length < numImages && carImageSet.length < imagePool.length) {
+      const randIdx = Math.floor(Math.random() * imagePool.length);
+      if (!usedIndices.has(randIdx)) {
+        carImageSet.push(imagePool[randIdx]);
+        usedIndices.add(randIdx);
+      }
+    }
+
     generatedCars.push({
       id: (i + 1).toString(),
       make: carModel.make,
@@ -229,6 +249,7 @@ const generateCars = (count: number): Car[] => {
       currentBid: basePrice,
       endTime: getEndTime(Math.floor(Math.random() * 240) + 1),
       image: isCrashed ? carImages.crashed[imageIndex] : carImages.normal[imageIndex],
+      images: carImageSet,
       mileage: baseMileage,
       location: locations[Math.floor(Math.random() * locations.length)],
       transmission: transmissions[Math.floor(Math.random() * transmissions.length)],

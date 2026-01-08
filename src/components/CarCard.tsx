@@ -3,6 +3,7 @@ import { Clock, MapPin, Gauge, AlertTriangle } from "lucide-react";
 import { Car } from "@/data/cars";
 import { Badge } from "@/components/ui/badge";
 import CountdownTimer from "./CountdownTimer";
+import CarImageCarousel from "./CarImageCarousel";
 
 interface CarCardProps {
   car: Car;
@@ -41,14 +42,14 @@ const CarCard = ({ car }: CarCardProps) => {
   return (
     <Link to={`/car/${car.id}`} className="group">
       <div className="bg-gradient-card rounded-lg overflow-hidden shadow-card hover-lift border border-border/50 h-full">
-        {/* Image */}
+        {/* Image Carousel */}
         <div className="relative aspect-[4/3] overflow-hidden">
-          <img
-            src={car.image}
+          <CarImageCarousel 
+            images={car.images?.length > 0 ? car.images : [car.image]} 
             alt={`${car.year} ${car.make} ${car.model}`}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            autoScrollInterval={3000}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent pointer-events-none" />
           
           {/* Badges */}
           <div className="absolute top-2 left-2 flex flex-wrap gap-1">
