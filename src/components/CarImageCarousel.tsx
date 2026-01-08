@@ -19,9 +19,9 @@ const CarImageCarousel = ({ images, alt, autoScrollInterval = 3000 }: CarImageCa
     setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
   }, [images.length]);
 
-  // Auto-scroll effect
+  // Auto-scroll only on hover
   useEffect(() => {
-    if (images.length <= 1 || isHovered) return;
+    if (images.length <= 1 || !isHovered) return;
 
     const interval = setInterval(nextSlide, autoScrollInterval);
     return () => clearInterval(interval);
