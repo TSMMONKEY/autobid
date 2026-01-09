@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Layout from "@/components/Layout";
 import CountdownTimer from "@/components/CountdownTimer";
+import CarDetailCarousel from "@/components/CarDetailCarousel";
 import { getCarById } from "@/data/cars";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -131,14 +132,9 @@ const CarDetail = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Main Content */}
               <div className="lg:col-span-2 space-y-6">
-                {/* Image */}
-                <div className="relative rounded-xl overflow-hidden shadow-card">
-                  <img
-                    src={car.image}
-                    alt={`${car.year} ${car.make} ${car.model}`}
-                    className="w-full aspect-[16/10] object-cover"
-                  />
-                  <div className="absolute top-4 left-4 flex gap-2">
+                {/* Image Carousel */}
+                <div className="relative">
+                  <div className="absolute top-4 left-4 flex gap-2 z-10">
                     {car.isLive && (
                       <Badge className="bg-destructive text-destructive-foreground">
                         <Radio className="w-3 h-3 mr-1 animate-pulse" />
@@ -152,6 +148,10 @@ const CarDetail = () => {
                       </Badge>
                     )}
                   </div>
+                  <CarDetailCarousel 
+                    images={car.images} 
+                    alt={`${car.year} ${car.make} ${car.model}`} 
+                  />
                 </div>
 
                 {/* Title & Actions */}
@@ -248,11 +248,13 @@ const CarDetail = () => {
                   </div>
 
                   {/* Time Remaining */}
-                  <div className="text-center mb-6 pb-6 border-b border-border">
-                    <p className="text-sm text-muted-foreground mb-3">
+                  <div className="mb-6 pb-6 border-b border-border">
+                    <p className="text-sm text-muted-foreground mb-3 text-center">
                       Time Remaining
                     </p>
-                    <CountdownTimer endTime={car.endTime} variant="large" />
+                    <div className="flex justify-center">
+                      <CountdownTimer endTime={car.endTime} variant="large" />
+                    </div>
                   </div>
 
                   {/* Place Bid */}

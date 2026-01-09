@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
+import ScrollToTop from "./components/ScrollToTop";
 import Index from "./pages/Index";
 import Auctions from "./pages/Auctions";
 import LiveAuctions from "./pages/LiveAuctions";
@@ -16,6 +17,14 @@ import Taxis from "./pages/Taxis";
 import TaxiDetail from "./pages/TaxiDetail";
 import AddCar from "./pages/AddCar";
 import NotFound from "./pages/NotFound";
+import FAQ from "./pages/FAQ";
+import Contact from "./pages/Contact";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
+import Shipping from "./pages/Shipping";
+import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
+import ActivateBidding from "./pages/ActivateBidding";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +35,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auctions" element={<Auctions />} />
@@ -38,6 +48,14 @@ const App = () => (
             <Route path="/how-it-works" element={<HowItWorksPage />} />
             <Route path="/sell" element={<SellYourCar />} />
             <Route path="/admin/add-car" element={<AddCar />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/shipping" element={<Shipping />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/activate-bidding" element={<ActivateBidding />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
