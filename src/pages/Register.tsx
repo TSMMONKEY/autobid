@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Car, Mail, Lock, User, Eye, EyeOff, Phone } from "lucide-react";
+import { Car, Mail, Lock, User, Eye, EyeOff, Phone, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Register = () => {
@@ -14,6 +14,7 @@ const Register = () => {
     lastName: "",
     email: "",
     phone: "",
+    location: "",
     password: "",
     confirmPassword: "",
   });
@@ -168,6 +169,24 @@ const Register = () => {
                     name="phone"
                     placeholder="+27 82 000 0000"
                     value={formData.phone}
+                    onChange={handleChange}
+                    className="pl-12 h-12"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm text-muted-foreground mb-2 block">
+                  Location
+                </label>
+                <div className="relative">
+                  <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Input
+                    type="text"
+                    name="location"
+                    placeholder="e.g., Sandton, Johannesburg"
+                    value={formData.location}
                     onChange={handleChange}
                     className="pl-12 h-12"
                     required
