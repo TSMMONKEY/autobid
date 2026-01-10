@@ -19,6 +19,9 @@ export interface Car {
   isLive: boolean;
   isFeatured: boolean;
   condition: "excellent" | "good" | "fair" | "crashed" | "salvage";
+  hasKey?: boolean;
+  engineStarts?: boolean;
+  primaryDamage?: string;
 }
 
 const getEndTime = (hoursFromNow: number) => {
