@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Car, Search } from "lucide-react";
+import { useCars } from "@/hooks/useCars";
 
 const HeroSection = () => {
+  const { cars } = useCars();
   return (
     <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-secondary/50 to-background">
       {/* Background Image */}
@@ -21,7 +23,7 @@ const HeroSection = () => {
           <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/30 rounded-full px-4 py-2 mb-8 animate-fade-in">
             <Car className="w-4 h-4 text-primary" />
             <span className="text-sm text-primary font-medium">
-              320+ Cars & 60+ Taxis Available in Joburg
+              {cars.length}+ Cars & 60+ Taxis Available in Joburg
             </span>
           </div>
 
@@ -53,7 +55,7 @@ const HeroSection = () => {
           {/* Stats */}
           <div className="grid grid-cols-3 gap-8 mt-14 pt-8 border-t border-border animate-fade-in" style={{ animationDelay: "0.4s" }}>
             {[
-              { value: "320+", label: "Cars Available" },
+              { value: `${cars.length}+`, label: "Cars Available" },
               { value: "60+", label: "Taxis For Sale" },
               { value: "JHB", label: "Based" },
             ].map((stat, index) => (
