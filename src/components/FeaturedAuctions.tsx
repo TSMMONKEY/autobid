@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import CarCard from "./CarCard";
-import { cars } from "@/data/cars";
+import { useCars } from "@/hooks/useCars";
 
 const FeaturedAuctions = () => {
+  const { cars, isLoading } = useCars();
+  
   // Get a mix of crashed and good condition cars
   const featuredCars = cars.slice(0, 10);
 
@@ -33,17 +35,24 @@ const FeaturedAuctions = () => {
         </div>
 
         {/* Grid - 5 columns */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {featuredCars.map((car, index) => (
-            <div
-              key={car.id}
-              className="animate-fade-in"
-              style={{ animationDelay: `${index * 0.05}s` }}
-            >
-              <CarCard car={car} />
-            </div>
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="flex items-center justify-center py-16">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            <span className="ml-3 text-muted-foreground">Loading vehicles...</span>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {featuredCars.map((car, index) => (
+              <div
+                key={car.id}
+                className="animate-fade-in"
+                style={{ animationDelay: `${index * 0.05}s` }}
+              >
+                <CarCard car={car} />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

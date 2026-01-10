@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Radio } from "lucide-react";
-import { getLiveCars } from "@/data/cars";
+import { useCars } from "@/hooks/useCars";
 import CountdownTimer from "./CountdownTimer";
 
 const LiveAuctionBanner = () => {
-  const liveCars = getLiveCars();
+  const { liveCars } = useCars();
   const featuredLive = liveCars[0];
 
   if (!featuredLive) return null;
