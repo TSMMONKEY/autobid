@@ -1,11 +1,11 @@
 import { Helmet } from "react-helmet-async";
 import Layout from "@/components/Layout";
 import CarCard from "@/components/CarCard";
-import { getLiveCars } from "@/data/cars";
-import { Radio } from "lucide-react";
+import { useCars } from "@/hooks/useCars";
+import { Radio, Loader2 } from "lucide-react";
 
 const LiveAuctions = () => {
-  const liveCars = getLiveCars();
+  const { liveCars, isLoading, isError } = useCars();
 
   return (
     <>
@@ -36,8 +36,24 @@ const LiveAuctions = () => {
               </p>
             </div>
 
+            {/* Loading State */}
+            {isLoading && (
+              <div className="flex items-center justify-center py-16">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                <span className="ml-3 text-muted-foreground">Loading live auctions...</span>
+              </div>
+            )}
+
+            {/* Error State */}
+            {isError && (
+              <div className="text-center py-16 bg-card rounded-2xl border border-destructive/50 mb-8">
+                <p className="text-destructive mb-2">Failed to load from API</p>
+                <p className="text-muted-foreground text-sm">Showing cached data instead</p>
+              </div>
+            )}
+
             {/* Live Cars Grid */}
-            {liveCars.length > 0 ? (
+            {!isLoading && liveCars.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {liveCars.map((car, index) => (
                   <div
@@ -49,7 +65,7 @@ const LiveAuctions = () => {
                   </div>
                 ))}
               </div>
-            ) : (
+            ) : !isLoading ? (
               <div className="text-center py-16 bg-card rounded-2xl border border-border">
                 <Radio className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
                 <h2 className="font-display text-2xl font-semibold text-foreground mb-2">
@@ -59,7 +75,7 @@ const LiveAuctions = () => {
                   Check back soon or browse our upcoming auctions.
                 </p>
               </div>
-            )}
+            ) : null}
           </div>
         </div>
       </Layout>

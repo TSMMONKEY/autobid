@@ -2,14 +2,15 @@ import { useState, useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 import Layout from "@/components/Layout";
 import CarCard from "@/components/CarCard";
-import { cars } from "@/data/cars";
+import { useCars } from "@/hooks/useCars";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, SlidersHorizontal, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, SlidersHorizontal, X, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 
 const CARS_PER_PAGE = 20; // 5 columns x 4 rows
 
 const Auctions = () => {
+  const { cars, isLoading, isError } = useCars();
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [selectedMake, setSelectedMake] = useState<string | null>(null);
@@ -19,7 +20,7 @@ const Auctions = () => {
   const makes = useMemo(() => {
     const uniqueMakes = [...new Set(cars.map((car) => car.make))];
     return uniqueMakes.sort();
-  }, []);
+  }, [cars]);
 
   const conditions = ["excellent", "good", "fair", "crashed", "salvage"];
 
@@ -36,7 +37,7 @@ const Auctions = () => {
 
       return matchesSearch && matchesMake && matchesCondition;
     });
-  }, [searchQuery, selectedMake, selectedCondition]);
+  }, [cars, searchQuery, selectedMake, selectedCondition]);
 
   const totalPages = Math.ceil(filteredCars.length / CARS_PER_PAGE);
   
@@ -103,6 +104,25 @@ const Auctions = () => {
                 Crashed, salvage, and running vehicles available.
               </p>
             </div>
+
+            {/* Loading State */}
+            {isLoading && (
+              <div className="flex items-center justify-center py-16">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                <span className="ml-3 text-muted-foreground">Loading vehicles...</span>
+              </div>
+            )}
+
+            {/* Error State */}
+            {isError && (
+              <div className="text-center py-16 bg-card rounded-2xl border border-destructive/50">
+                <p className="text-destructive mb-2">Failed to load vehicles from API</p>
+                <p className="text-muted-foreground text-sm">Showing cached data instead</p>
+              </div>
+            )}
+
+            {!isLoading && (
+              <>
 
             {/* Search & Filters */}
             <div className="mb-6">
@@ -268,6 +288,8 @@ const Auctions = () => {
                   <ChevronRight className="w-5 h-5" />
                 </Button>
               </div>
+              )}
+            </>
             )}
           </div>
         </div>
