@@ -115,12 +115,12 @@ const transformVehicle = (vehicle: ApiVehicle, index: number): Car => {
 };
 
 // API base URL - update this to your PHP server URL
-const API_BASE_URL = import.meta.env.VITE_CARS_API_URL || "/api";
+const API_URL = import.meta.env.VITE_CARS_API_URL || "http://localhost/cars.php";
 
 // Fetch all cars from API
 export const fetchCars = async (): Promise<Car[]> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/cars.php`);
+    const response = await fetch(API_URL);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
