@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { format } from "date-fns";
-import { ArrowLeft, Clock, MapPin, Gauge, Calendar, Key, Zap, AlertTriangle } from "lucide-react";
+import { ArrowLeft, Clock, MapPin, Gauge, Calendar, Key, Zap, AlertTriangle, Loader2 } from "lucide-react";
 
 interface Car {
   id: string;

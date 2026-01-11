@@ -1,11 +1,13 @@
 // hooks/useCars.ts
 import { useCars as useCarsApi } from "@/services/carsApi";
-import type { Car } from "@/data/cars";
+import type { Car } from "@/services/carsApi";
+
+export type { Car };
 
 export const useCars = () => {
   const { 
     cars, 
-    loading: isLoading, 
+    loading, 
     error, 
     refetch,
     liveCars,
@@ -17,7 +19,7 @@ export const useCars = () => {
 
   return {
     cars,
-    isLoading,
+    isLoading: loading,
     isError: !!error,
     error,
     refetch,

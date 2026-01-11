@@ -10,7 +10,7 @@ import { Search, SlidersHorizontal, X, ChevronLeft, ChevronRight, Loader2 } from
 const CARS_PER_PAGE = 20; // 5 columns x 4 rows
 
 const Auctions = () => {
-  const { cars, loading, error } = useCars();
+  const { cars, isLoading, error } = useCars();
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [selectedMake, setSelectedMake] = useState<string | null>(null);
@@ -86,7 +86,7 @@ const Auctions = () => {
     return pages;
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Layout>
         <div className="flex justify-center items-center min-h-[50vh]">

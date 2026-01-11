@@ -11,6 +11,7 @@ import LiveAuctions from "./pages/LiveAuctions";
 import CarDetail from "./pages/CarDetail";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Auth from "./pages/Auth";
 import HowItWorksPage from "./pages/HowItWorksPage";
 import SellYourCar from "./pages/SellYourCar";
 import Taxis from "./pages/Taxis";
@@ -43,8 +44,9 @@ const App = () => (
             <Route path="/car/:id" element={<CarDetail />} />
             <Route path="/taxis" element={<Taxis />} />
             <Route path="/taxi/:id" element={<TaxiDetail />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Auth />} />
+            <Route path="/register" element={<Auth />} />
+            <Route path="/auth" element={<Auth />} />
             <Route path="/how-it-works" element={<HowItWorksPage />} />
             <Route path="/sell" element={<SellYourCar />} />
             <Route path="/admin/add-car" element={<AddCar />} />
