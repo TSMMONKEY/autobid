@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Clock, MapPin, Gauge, AlertTriangle } from "lucide-react";
-import { Car } from "@/data/cars";
+import type { Car } from "@/data/cars";
 import { Badge } from "@/components/ui/badge";
 import CountdownTimer from "./CountdownTimer";
 import CarImageCarousel from "./CarImageCarousel";

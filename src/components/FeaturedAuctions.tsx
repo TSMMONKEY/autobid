@@ -1,49 +1,63 @@
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
-import CarCard from "./CarCard";
-import { cars } from "@/data/cars";
+// In components/FeaturedAuctions.tsx
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { ArrowRight, Loader2, AlertCircle } from 'lucide-react';
+import CarCard from './CarCard';
+import { useCars } from '@/hooks/useCars';
 
 const FeaturedAuctions = () => {
-  // Get a mix of crashed and good condition cars
-  const featuredCars = cars.slice(0, 10);
+  const { 
+    featuredCars, 
+    isLoading, 
+    isError, 
+    error, 
+    refetch,
+    cars 
+  } = useCars();
+  
+  // If no featured cars, show the first 3 regular cars
+  const displayedCars = featuredCars.length > 0 
+    ? featuredCars.slice(0, 10) 
+    : (cars?.slice(0, 10) || []);
+
+  console.log('Featured cars:', featuredCars);
+  console.log('All cars:', cars);
+  console.log('Displayed cars:', displayedCars);
 
   return (
-    <section className="py-20 bg-secondary/30">
+    <section className="py-12 bg-gray-50">
       <div className="container mx-auto px-4">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-          <div>
-            <span className="inline-block bg-primary/10 text-primary font-semibold text-sm uppercase tracking-wider px-4 py-2 rounded-full">
-              Latest Listings
-            </span>
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-4">
-              Featured <span className="text-primary">Auctions</span>
-            </h2>
-            <p className="text-muted-foreground mt-3 max-w-xl">
-              Browse our latest vehicles from Johannesburg. Running cars and salvage deals available.
-            </p>
-          </div>
+        <div className="flex flex-col md:flex-row justify-between items-center mb-8">
+          <h2 className="text-3xl font-bold mb-4 md:mb-0">Featured Auctions</h2>
           <Link to="/auctions">
-            <Button variant="green-outline" className="group">
-              View All {cars.length} Cars
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <Button variant="outline" className="flex items-center gap-2">
+              View All Auctions <ArrowRight className="w-4 h-4" />
             </Button>
           </Link>
         </div>
 
-        {/* Grid - 5 columns */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {featuredCars.map((car, index) => (
-            <div
-              key={car.id}
-              className="animate-fade-in"
-              style={{ animationDelay: `${index * 0.05}s` }}
-            >
-              <CarCard car={car} />
-            </div>
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="flex justify-center items-center h-64">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          </div>
+        ) : isError ? (
+          <div className="text-center py-12">
+            <div className="text-red-500 mb-4">Failed to load featured cars</div>
+            <Button onClick={refetch} variant="outline">
+              Try Again
+            </Button>
+          </div>
+        ) : displayedCars.length === 0 ? (
+          <div className="text-center py-12 text-muted-foreground">
+            No cars available at the moment.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {displayedCars.map((car) => (
+              <CarCard key={car.id} car={car} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

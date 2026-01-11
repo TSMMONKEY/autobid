@@ -2,14 +2,15 @@ import { useState, useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 import Layout from "@/components/Layout";
 import CarCard from "@/components/CarCard";
-import { cars } from "@/data/cars";
+import { useCars } from "@/hooks/useCars";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, SlidersHorizontal, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, SlidersHorizontal, X, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 
 const CARS_PER_PAGE = 20; // 5 columns x 4 rows
 
 const Auctions = () => {
+  const { cars, loading, error } = useCars();
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [selectedMake, setSelectedMake] = useState<string | null>(null);
@@ -19,9 +20,9 @@ const Auctions = () => {
   const makes = useMemo(() => {
     const uniqueMakes = [...new Set(cars.map((car) => car.make))];
     return uniqueMakes.sort();
-  }, []);
+  }, [cars]);
 
-  const conditions = ["excellent", "good", "fair", "crashed", "salvage"];
+  const conditions = ["excellent", "good", "fair", "crashed", "salvage"] as const;
 
   const filteredCars = useMemo(() => {
     return cars.filter((car) => {
@@ -44,6 +45,33 @@ const Auctions = () => {
     const startIndex = (currentPage - 1) * CARS_PER_PAGE;
     return filteredCars.slice(startIndex, startIndex + CARS_PER_PAGE);
   }, [filteredCars, currentPage]);
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex justify-center items-center min-h-[50vh]">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
+
+  if (error) {
+    return (
+      <Layout>
+        <div className="text-center py-12 text-destructive">
+          <p>Failed to load cars. Please try again later.</p>
+          <Button 
+            variant="outline" 
+            className="mt-4"
+            onClick={() => window.location.reload()}
+          >
+            Retry
+          </Button>
+        </div>
+      </Layout>
+    );
+  }
 
   const clearFilters = () => {
     setSearchQuery("");
@@ -82,15 +110,14 @@ const Auctions = () => {
   };
 
   return (
-    <>
+    <Layout>
       <Helmet>
-        <title>All Auctions | AutoBid SA - Car Auctions Johannesburg</title>
+        <title>Car Auctions | AutoBid</title>
         <meta
           name="description"
-          content="Browse car auctions in Johannesburg. Find Toyota, VW, Ford, Nissan and more. Crashed and running vehicles available."
+          content="Browse our selection of cars available for auction. Find your next vehicle at a great price."
         />
       </Helmet>
-      <Layout>
         <div className="pt-24 pb-16 min-h-screen">
           <div className="container mx-auto px-4">
             {/* Header */}
@@ -272,7 +299,6 @@ const Auctions = () => {
           </div>
         </div>
       </Layout>
-    </>
   );
 };
 
