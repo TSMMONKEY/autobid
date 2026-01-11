@@ -14,7 +14,114 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      vehicles: {
+        Row: {
+          bid_count: number
+          condition: string | null
+          created_at: string
+          current_bid: number
+          description: string | null
+          end_time: string
+          engine: string | null
+          exterior: string | null
+          id: string
+          image: string
+          images: string[]
+          interior: string | null
+          is_featured: boolean
+          is_live: boolean
+          location: string
+          make: string
+          mileage: number
+          model: string
+          transmission: string
+          updated_at: string
+          vin: string | null
+          year: number
+        }
+        Insert: {
+          bid_count?: number
+          condition?: string | null
+          created_at?: string
+          current_bid?: number
+          description?: string | null
+          end_time: string
+          engine?: string | null
+          exterior?: string | null
+          id?: string
+          image: string
+          images?: string[]
+          interior?: string | null
+          is_featured?: boolean
+          is_live?: boolean
+          location?: string
+          make: string
+          mileage?: number
+          model: string
+          transmission?: string
+          updated_at?: string
+          vin?: string | null
+          year: number
+        }
+        Update: {
+          bid_count?: number
+          condition?: string | null
+          created_at?: string
+          current_bid?: number
+          description?: string | null
+          end_time?: string
+          engine?: string | null
+          exterior?: string | null
+          id?: string
+          image?: string
+          images?: string[]
+          interior?: string | null
+          is_featured?: boolean
+          is_live?: boolean
+          location?: string
+          make?: string
+          mileage?: number
+          model?: string
+          transmission?: string
+          updated_at?: string
+          vin?: string | null
+          year?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
