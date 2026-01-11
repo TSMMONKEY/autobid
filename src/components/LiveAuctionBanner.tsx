@@ -6,7 +6,6 @@ import { useCars } from "@/hooks/useCars";
 
 const LiveAuctionBanner = () => {
   const { liveCars } = useCars();
-  const { liveCars } = useCars();
   const featuredLive = liveCars[0];
 
   if (!featuredLive) return null;
