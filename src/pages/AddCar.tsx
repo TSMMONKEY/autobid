@@ -120,12 +120,10 @@ const AddCar = () => {
       const validImages = formData.images
         .filter(img => img.trim() !== "")
         .map(img => {
-          // If it's already a full path or URL, keep it as-is
-          if (img.startsWith('/') || img.startsWith('http')) {
-            return img;
-          }
-          // Otherwise, construct the path: /assets/imgs/{make}/{filename}
-          return `/assets/imgs/${makePath}/${img}.jpg`;
+          // Strip extension if user added one
+          const filename = img.replace(/\.(jpg|jpeg|png|webp)$/i, '');
+          // Always construct the full path
+          return `/assets/imgs/${makePath}/${filename}.jpg`;
         });
       const mainImage = validImages[0] || "/placeholder.svg";
 
