@@ -9,9 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Car, Plus, Trash2, Loader2 } from "lucide-react";
+import { Car, Plus, Trash2, Loader2, ShieldAlert } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useUserRole } from "@/hooks/useUserRole";
 
 interface CarFormData {
   year: string;
@@ -59,6 +60,7 @@ const conditionOptions = ["excellent", "good", "fair", "crashed", "salvage"];
 const AddCar = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated, loading: authLoading } = useAuth();
+  const { isAdmin, loading: roleLoading } = useUserRole();
   const [formData, setFormData] = useState<CarFormData>(initialFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -155,11 +157,37 @@ const AddCar = () => {
     toast.info("Form reset");
   };
 
-  if (authLoading) {
+  if (authLoading || roleLoading) {
     return (
       <Layout>
         <div className="flex items-center justify-center min-h-screen">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
+
+  // Show access denied for non-admins
+  if (!isAdmin) {
+    return (
+      <Layout>
+        <div className="container mx-auto px-4 py-8 pt-24">
+          <Card className="max-w-lg mx-auto">
+            <CardHeader className="text-center">
+              <div className="mx-auto p-3 bg-destructive/10 rounded-full w-fit mb-4">
+                <ShieldAlert className="w-8 h-8 text-destructive" />
+              </div>
+              <CardTitle className="text-2xl">Access Denied</CardTitle>
+              <CardDescription>
+                Only administrators can add new vehicles to the auction.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="text-center">
+              <Button onClick={() => navigate("/auctions")} variant="outline">
+                Browse Auctions
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </Layout>
     );

@@ -1,5 +1,58 @@
-import { supabase } from './client'
-import { Car, ApiVehicle, transformDbCar, transformVehicleToDb } from '@/data/cars'
+import { supabase } from '@/integrations/supabase/client'
+import type { Car } from '@/data/cars'
+
+interface DbCar {
+  id: string;
+  make: string;
+  model: string;
+  year: number;
+  current_bid: number;
+  end_time: string;
+  image: string;
+  images: string[];
+  mileage: number;
+  location?: string | null;
+  transmission: string;
+  engine?: string | null;
+  exterior?: string | null;
+  interior?: string | null;
+  vin?: string | null;
+  description?: string | null;
+  bid_count: number;
+  is_live: boolean;
+  is_featured: boolean;
+  condition?: string | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
+const transformDbCar = (dbCar: DbCar): Car => ({
+  id: dbCar.id,
+  make: dbCar.make,
+  model: dbCar.model,
+  year: dbCar.year,
+  currentBid: dbCar.current_bid,
+  endTime: new Date(dbCar.end_time),
+  image: dbCar.image,
+  images: dbCar.images || [dbCar.image],
+  mileage: dbCar.mileage,
+  location: dbCar.location || 'South Africa',
+  transmission: dbCar.transmission,
+  engine: dbCar.engine || 'Unknown',
+  exterior: dbCar.exterior || 'Unknown',
+  interior: dbCar.interior || 'Standard',
+  vin: dbCar.vin || '',
+  description: dbCar.description || `${dbCar.year} ${dbCar.make} ${dbCar.model}`,
+  bidCount: dbCar.bid_count,
+  isLive: dbCar.is_live,
+  isFeatured: dbCar.is_featured,
+  condition: (dbCar.condition as Car['condition']) || 'good',
+  hasKey: true,
+  engineStarts: true,
+  primaryDamage: 'None',
+  createdAt: dbCar.created_at ? new Date(dbCar.created_at) : undefined,
+  updatedAt: dbCar.updated_at ? new Date(dbCar.updated_at) : undefined,
+});
 
 // Fetch all cars with optional filters
 export const fetchCars = async ({
@@ -15,7 +68,7 @@ export const fetchCars = async ({
 } = {}): Promise<Car[]> => {
   try {
     let query = supabase
-      .from('cars')
+      .from('vehicles')
       .select('*')
       .order('created_at', { ascending: false })
 
@@ -35,7 +88,7 @@ export const fetchCars = async ({
 
     if (error) throw error
 
-    return data.map(transformDbCar)
+    return (data || []).map((row: any) => transformDbCar(row as DbCar))
   } catch (error) {
     console.error('Error fetching cars:', error)
     throw error
@@ -46,104 +99,16 @@ export const fetchCars = async ({
 export const fetchCarById = async (id: string): Promise<Car | null> => {
   try {
     const { data, error } = await supabase
-      .from('cars')
+      .from('vehicles')
       .select('*')
       .eq('id', id)
       .single()
 
     if (error) throw error
-    return transformDbCar(data)
+    return transformDbCar(data as DbCar)
   } catch (error) {
     console.error(`Error fetching car ${id}:`, error)
     return null
-  }
-}
-
-// Create a new car from API vehicle data
-export const createCarFromApiVehicle = async (
-  vehicle: ApiVehicle,
-  index: number
-): Promise<Car | null> => {
-  try {
-    const carData = transformVehicleToDb(vehicle, index)
-    
-    const { data, error } = await supabase
-      .from('cars')
-      .insert(carData)
-      .select()
-      .single()
-
-    if (error) throw error
-    return transformDbCar(data)
-  } catch (error) {
-    console.error('Error creating car:', error)
-    return null
-  }
-}
-
-// Place a bid on a car
-export const placeBid = async (
-  carId: string,
-  amount: number,
-  userId: string
-): Promise<{ car: Car | null; success: boolean; error?: string }> => {
-  try {
-    // Start a transaction
-    const { data: carData, error: carError } = await supabase.rpc('place_bid', {
-      car_id: carId,
-      user_id: userId,
-      bid_amount: amount,
-    })
-
-    if (carError) throw carError
-    
-    return {
-      car: carData ? transformDbCar(carData) : null,
-      success: true,
-    }
-  } catch (error: any) {
-    console.error('Error placing bid:', error)
-    return {
-      car: null,
-      success: false,
-      error: error.message || 'Failed to place bid',
-    }
-  }
-}
-
-// Update car details
-export const updateCar = async (
-  id: string,
-  updates: Partial<Omit<Car, 'id' | 'createdAt' | 'updatedAt'>>
-): Promise<Car | null> => {
-  try {
-    const { data, error } = await supabase
-      .from('cars')
-      .update({
-        ...updates,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', id)
-      .select()
-      .single()
-
-    if (error) throw error
-    return transformDbCar(data)
-  } catch (error) {
-    console.error(`Error updating car ${id}:`, error)
-    return null
-  }
-}
-
-// Delete a car
-export const deleteCar = async (id: string): Promise<boolean> => {
-  try {
-    const { error } = await supabase.from('cars').delete().eq('id', id)
-    if (error) throw error
-    return true
-  } catch (error) {
-    console.error(`Error deleting car ${id}:`, error)
-    return false
   }
 }
 
@@ -153,7 +118,7 @@ export const getCarBids = async (carId: string) => {
     const { data, error } = await supabase
       .from('bids')
       .select('*, profiles(full_name, avatar_url)')
-      .eq('car_id', carId)
+      .eq('vehicle_id', carId)
       .order('created_at', { ascending: false })
 
     if (error) throw error

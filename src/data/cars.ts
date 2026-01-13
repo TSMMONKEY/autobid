@@ -54,16 +54,16 @@ export interface Car {
 }
 
 // Helper to transform database car to frontend car format
-const transformDbCar = (dbCar: any): Car => ({
+export const transformDbCar = (dbCar: any): Car => ({
   ...dbCar,
   currentBid: dbCar.current_bid,
   endTime: new Date(dbCar.end_time),
   isLive: dbCar.is_live,
   isFeatured: dbCar.is_featured,
   bidCount: dbCar.bid_count,
-  hasKey: dbCar.has_key,
-  engineStarts: dbCar.engine_starts,
-  primaryDamage: dbCar.primary_damage,
+  hasKey: dbCar.has_key ?? true,
+  engineStarts: dbCar.engine_starts ?? true,
+  primaryDamage: dbCar.primary_damage ?? 'None',
   createdAt: dbCar.created_at ? new Date(dbCar.created_at) : undefined,
   updatedAt: dbCar.updated_at ? new Date(dbCar.updated_at) : undefined,
 });
