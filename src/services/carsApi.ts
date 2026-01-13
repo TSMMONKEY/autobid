@@ -51,9 +51,9 @@ interface CarRow {
   is_live: boolean;
   is_featured: boolean;
   condition: string;
-  has_key: boolean;
-  engine_starts: boolean;
-  primary_damage: string;
+  has_key?: boolean;
+  engine_starts?: boolean;
+  primary_damage?: string;
   created_at?: string;
   updated_at?: string;
 }
@@ -79,9 +79,9 @@ const transformCarRow = (row: CarRow): Car => ({
   isLive: row.is_live,
   isFeatured: row.is_featured,
   condition: (row.condition as Car['condition']) || 'good',
-  hasKey: row.has_key,
-  engineStarts: row.engine_starts,
-  primaryDamage: row.primary_damage,
+  hasKey: row.has_key ?? true,
+  engineStarts: row.engine_starts ?? true,
+  primaryDamage: row.primary_damage ?? 'None',
   ...(row.created_at && { createdAt: new Date(row.created_at) }),
   ...(row.updated_at && { updatedAt: new Date(row.updated_at) }),
 });
@@ -109,7 +109,7 @@ export const useCars = () => {
       }
 
       console.log('Fetched cars from Supabase:', data);
-      return data.map((row: CarRow) => transformCarRow(row));
+      return data.map((row: any) => transformCarRow(row as CarRow));
     } catch (err) {
       console.error("Error in fetchCars:", err);
       throw err;
@@ -163,7 +163,7 @@ export const useCars = () => {
     getCarById: useCallback(async (id: string): Promise<Car | undefined> => {
       try {
         const { data, error } = await supabase
-          .from('cars')
+          .from('vehicles')
           .select('*')
           .eq('id', id)
           .single();
@@ -173,7 +173,7 @@ export const useCars = () => {
           return undefined;
         }
 
-        return data ? transformCarRow(data) : undefined;
+        return data ? transformCarRow(data as CarRow) : undefined;
       } catch (error) {
         console.error('Error in getCarById:', error);
         return undefined;

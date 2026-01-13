@@ -23,12 +23,11 @@ interface CarRow {
   is_live: boolean;
   is_featured: boolean;
   condition: string;
-  has_key: boolean;
-  engine_starts: boolean;
-  primary_damage: string;
+  has_key?: boolean;
+  engine_starts?: boolean;
+  primary_damage?: string;
   created_at?: string;
   updated_at?: string;
-  // Add any additional fields that exist in your vehicles table
   [key: string]: any;
 }
 
@@ -53,9 +52,9 @@ const transformCarRow = (row: CarRow): Car => ({
   isLive: row.is_live,
   isFeatured: row.is_featured,
   condition: (row.condition as Car['condition']) || 'good',
-  hasKey: row.has_key,
-  engineStarts: row.engine_starts,
-  primaryDamage: row.primary_damage,
+  hasKey: row.has_key ?? true,
+  engineStarts: row.engine_starts ?? true,
+  primaryDamage: row.primary_damage ?? 'None',
   ...(row.created_at && { createdAt: new Date(row.created_at) }),
   ...(row.updated_at && { updatedAt: new Date(row.updated_at) }),
 });
