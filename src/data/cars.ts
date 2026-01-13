@@ -21,6 +21,8 @@ export interface ApiVehicle {
   title_code?: string;
   notes: string;
   images?: string[];
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface Car {
@@ -33,7 +35,7 @@ export interface Car {
   image: string;
   images: string[];
   mileage: number;
-  location: string;
+  location?: string;
   transmission: string;
   engine: string;
   exterior: string;
@@ -44,94 +46,61 @@ export interface Car {
   isLive: boolean;
   isFeatured: boolean;
   condition: "excellent" | "good" | "fair" | "crashed" | "salvage";
-  hasKey?: boolean;
-  engineStarts?: boolean;
-  primaryDamage?: string;
+  hasKey: boolean;
+  engineStarts: boolean;
+  primaryDamage: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-// -------------------
-// Helpers
-// -------------------
-const getEndTime = (hoursFromNow: number) => {
-  const date = new Date();
-  date.setHours(date.getHours() + hoursFromNow);
-  return date;
-};
+// Helper to transform database car to frontend car format
+const transformDbCar = (dbCar: any): Car => ({
+  ...dbCar,
+  currentBid: dbCar.current_bid,
+  endTime: new Date(dbCar.end_time),
+  isLive: dbCar.is_live,
+  isFeatured: dbCar.is_featured,
+  bidCount: dbCar.bid_count,
+  hasKey: dbCar.has_key,
+  engineStarts: dbCar.engine_starts,
+  primaryDamage: dbCar.primary_damage,
+  createdAt: dbCar.created_at ? new Date(dbCar.created_at) : undefined,
+  updatedAt: dbCar.updated_at ? new Date(dbCar.updated_at) : undefined,
+});
 
-export const transformVehicle = (vehicle: ApiVehicle, index: number): Car => {
-  const hasKey = vehicle.has_key === 1;
-  const engineStarts = vehicle.engine_starts === 1;
-
-  let condition: Car["condition"] = "good";
-  if (vehicle.primary_damage?.toLowerCase().includes("total")) condition = "salvage";
-  else if (vehicle.primary_damage && vehicle.primary_damage.toLowerCase() !== "none") condition = "crashed";
-  else if (!engineStarts) condition = "fair";
-  else if (hasKey && engineStarts && parseInt(vehicle.odometer || "0") < 100000) condition = "excellent";
-
-  const images = vehicle.images?.filter(img => img && img.trim() !== "") || ["https://via.placeholder.com/600"];
-  const mileage = parseInt(vehicle.odometer?.replace(/\D/g, "") || "0");
-  const year = parseInt(vehicle.year) || new Date().getFullYear();
-  const price = vehicle.price || 50000;
-
-  return {
-    id: vehicle.VID.toString(),
-    make: vehicle.make || "Unknown",
-    model: vehicle.model || vehicle.trim || "Model",
-    year,
-    currentBid: price,
-    endTime: getEndTime(Math.floor(Math.random() * 240) + 1),
-    image: images[0],
-    images,
-    mileage,
-    location: "Johannesburg, SA",
-    transmission: vehicle.transmission || "Automatic",
-    engine: vehicle.engine_type || `${vehicle.cylinders || "4"} Cylinder`,
-    exterior: vehicle.color || "Unknown",
-    interior: "Black",
-    vin: vehicle.vin || "N/A",
-    description: vehicle.notes || `${year} ${vehicle.make} ${vehicle.model || ""} for auction.`,
-    bidCount: Math.floor(Math.random() * 50) + 1,
-    isLive: index < 8,
-    isFeatured: Math.random() > 0.85,
-    condition,
-    hasKey,
-    engineStarts,
-    primaryDamage: vehicle.primary_damage,
-  };
-};
-
-// -------------------
-// API Fetch
-// -------------------
-const API_URL = import.meta.env.VITE_CARS_API_URL;
-
-export const fetchCars = async (): Promise<Car[]> => {
-  if (!API_URL) return [];
-
-  try {
-    const res = await fetch(API_URL);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data: ApiVehicle[] = await res.json();
-    return data.map(transformVehicle);
-  } catch (err) {
-    console.error("Failed to fetch cars from API", err);
-    return [];
-  }
-};
+// Helper to transform API vehicle to database format
+export const transformVehicleToDb = (vehicle: ApiVehicle, index: number) => ({
+  make: vehicle.make,
+  model: vehicle.model || 'Unknown',
+  year: parseInt(vehicle.year) || new Date().getFullYear(),
+  current_bid: 0,
+  end_time: new Date(Date.now() + (index + 1) * 24 * 60 * 60 * 1000).toISOString(),
+  image: vehicle.images?.[0] || '',
+  images: vehicle.images || [],
+  mileage: parseInt(vehicle.odometer) || 0,
+  transmission: vehicle.transmission || 'Automatic',
+  engine: vehicle.engine_type || 'Unknown',
+  exterior: vehicle.color || 'Unknown',
+  interior: vehicle.color || 'Unknown',
+  vin: vehicle.vin || '',
+  description: vehicle.notes || 'No description available',
+  bid_count: 0,
+  is_live: true,
+  is_featured: index % 5 === 0,
+  condition: 'good',
+  has_key: vehicle.has_key === 1,
+  engine_starts: vehicle.engine_starts === 1,
+  primary_damage: vehicle.primary_damage || 'None',
+});
 
 // -------------------
 // Filters
 // -------------------
-export const getLiveCars = (cars: Car[]) => cars.filter(c => c.isLive);
-export const getFeaturedCars = (cars: Car[]) => cars.filter(c => c.isFeatured);
-export const getCarById = (cars: Car[], id: string) => cars.find(c => c.id === id);
-export const getCrashedCars = (cars: Car[]) => cars.filter(c => c.condition === "crashed" || c.condition === "salvage");
-export const getGoodCars = (cars: Car[]) => cars.filter(c => c.condition === "excellent" || c.condition === "good");
-
-// export interface Car {
-  //   id: string;
-  //   make: string;
-  //   model: string;
+export const getLiveCars = (cars: Car[]) => cars.filter(car => car.isLive);
+export const getFeaturedCars = (cars: Car[]) => cars.filter(car => car.isFeatured);
+export const getCarById = (cars: Car[], id: string) => cars.find(car => car.id === id);
+export const getCrashedCars = (cars: Car[]) => cars.filter(car => car.condition === 'crashed');
+export const getGoodCars = (cars: Car[]) => cars.filter(car => car.condition === 'excellent' || car.condition === 'good');
   //   year: number;
   //   currentBid: number;
   //   endTime: Date;

@@ -23,12 +23,14 @@ export interface Car {
   isLive: boolean;
   isFeatured: boolean;
   condition: "excellent" | "good" | "fair" | "crashed" | "salvage";
-  hasKey?: boolean;
-  engineStarts?: boolean;
-  primaryDamage?: string;
+  hasKey: boolean;
+  engineStarts: boolean;
+  primaryDamage: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-interface VehicleRow {
+interface CarRow {
   id: string;
   make: string;
   model: string;
@@ -38,43 +40,51 @@ interface VehicleRow {
   image: string;
   images: string[];
   mileage: number;
-  location: string;
+  location?: string | null;
   transmission: string;
-  engine: string | null;
-  exterior: string | null;
-  interior: string | null;
-  vin: string | null;
-  description: string | null;
+  engine: string;
+  exterior: string;
+  interior: string;
+  vin: string;
+  description: string;
   bid_count: number;
   is_live: boolean;
   is_featured: boolean;
-  condition: string | null;
+  condition: string;
+  has_key: boolean;
+  engine_starts: boolean;
+  primary_damage: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
-const transformVehicleRow = (row: VehicleRow): Car => {
-  return {
-    id: row.id,
-    make: row.make,
-    model: row.model,
-    year: row.year,
-    currentBid: row.current_bid,
-    endTime: new Date(row.end_time),
-    image: row.image,
-    images: row.images || [row.image],
-    mileage: row.mileage,
-    location: row.location,
-    transmission: row.transmission,
-    engine: row.engine || 'N/A',
-    exterior: row.exterior || 'N/A',
-    interior: row.interior || 'Standard',
-    vin: row.vin || 'N/A',
-    description: row.description || `${row.year} ${row.make} ${row.model}`,
-    bidCount: row.bid_count,
-    isLive: row.is_live,
-    isFeatured: row.is_featured,
-    condition: (row.condition as Car['condition']) || 'fair',
-  };
-};
+const transformCarRow = (row: CarRow): Car => ({
+  id: row.id,
+  make: row.make,
+  model: row.model,
+  year: row.year,
+  currentBid: row.current_bid,
+  endTime: new Date(row.end_time),
+  image: row.image,
+  images: row.images || [row.image],
+  mileage: row.mileage,
+  location: row.location || 'Location not specified',
+  transmission: row.transmission,
+  engine: row.engine,
+  exterior: row.exterior,
+  interior: row.interior,
+  vin: row.vin,
+  description: row.description || `${row.year} ${row.make} ${row.model}`,
+  bidCount: row.bid_count,
+  isLive: row.is_live,
+  isFeatured: row.is_featured,
+  condition: (row.condition as Car['condition']) || 'good',
+  hasKey: row.has_key,
+  engineStarts: row.engine_starts,
+  primaryDamage: row.primary_damage,
+  ...(row.created_at && { createdAt: new Date(row.created_at) }),
+  ...(row.updated_at && { updatedAt: new Date(row.updated_at) }),
+});
 
 export const useCars = () => {
   const [cars, setCars] = useState<Car[]>([]);
@@ -89,14 +99,17 @@ export const useCars = () => {
         .order('created_at', { ascending: false });
 
       if (supabaseError) {
+        console.error('Supabase error:', supabaseError);
         throw new Error(supabaseError.message);
       }
 
-      if (!data) {
+      if (!data || data.length === 0) {
+        console.log('No cars found in the database');
         return [];
       }
 
-      return data.map((row: VehicleRow) => transformVehicleRow(row));
+      console.log('Fetched cars from Supabase:', data);
+      return data.map((row: CarRow) => transformCarRow(row));
     } catch (err) {
       console.error("Error in fetchCars:", err);
       throw err;
@@ -123,15 +136,16 @@ export const useCars = () => {
   }, [fetchCars]);
 
   const refetch = useCallback(async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       const data = await fetchCars();
       setCars(data);
       setError(null);
-      return data;
-    } catch (err: any) {
-      setError(err.message || "Failed to refetch cars");
-      throw err;
+      console.log('Successfully refetched cars:', data);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch cars';
+      console.error('Error refetching cars:', errorMessage);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -146,13 +160,30 @@ export const useCars = () => {
     featuredCars: cars.filter(car => car.isFeatured),
     crashedCars: cars.filter(car => car.condition === "crashed" || car.condition === "salvage"),
     goodCars: cars.filter(car => car.condition === "excellent" || car.condition === "good"),
-    getCarById: (id: string) => cars.find(car => car.id === id)
+    getCarById: useCallback(async (id: string): Promise<Car | undefined> => {
+      try {
+        const { data, error } = await supabase
+          .from('cars')
+          .select('*')
+          .eq('id', id)
+          .single();
+
+        if (error) {
+          console.error('Error fetching car by ID:', error);
+          return undefined;
+        }
+
+        return data ? transformCarRow(data) : undefined;
+      } catch (error) {
+        console.error('Error in getCarById:', error);
+        return undefined;
+      }
+    }, [])
   };
 };
 
 // Filter functions for external use
 export const getLiveCars = (cars: Car[]) => cars.filter(car => car.isLive);
 export const getFeaturedCars = (cars: Car[]) => cars.filter(car => car.isFeatured);
-export const getCarById = (cars: Car[], id: string) => cars.find(car => car.id === id);
 export const getCrashedCars = (cars: Car[]) => cars.filter(car => car.condition === "crashed" || car.condition === "salvage");
 export const getGoodCars = (cars: Car[]) => cars.filter(car => car.condition === "excellent" || car.condition === "good");
