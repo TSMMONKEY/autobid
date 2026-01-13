@@ -125,7 +125,7 @@ const AddCar = () => {
             return img;
           }
           // Otherwise, construct the path: /assets/imgs/{make}/{filename}
-          return `/assets/imgs/${makePath}/${img}`;
+          return `/assets/imgs/${makePath}/${img}.jpg`;
         });
       const mainImage = validImages[0] || "/placeholder.svg";
 
