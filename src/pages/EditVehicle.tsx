@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,12 +9,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Car, Plus, Trash2, Loader2, ShieldAlert } from "lucide-react";
+import { Car, Plus, Trash2, Loader2, ShieldAlert, Save } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
 
-interface CarFormData {
+interface VehicleFormData {
   year: string;
   make: string;
   model: string;
@@ -35,78 +35,102 @@ interface CarFormData {
   vehicleType: string;
 }
 
-const initialFormData: CarFormData = {
-  year: "",
-  make: "",
-  model: "",
-  vin: "",
-  mileage: "",
-  exterior: "",
-  interior: "",
-  engine: "",
-  transmission: "Manual",
-  condition: "good",
-  location: "South Africa",
-  description: "",
-  currentBid: "0",
-  endTime: "",
-  isLive: true,
-  isFeatured: false,
-  images: [""],
-  vehicleType: "car",
-};
-
 const transmissionOptions = ["Manual", "Automatic", "CVT", "Semi-Auto", "DCT"];
 const conditionOptions = ["excellent", "good", "fair", "crashed", "salvage"];
 const vehicleTypeOptions = ["car", "taxi"];
 
-const AddCar = () => {
+const EditVehicle = () => {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user, isAuthenticated, loading: authLoading } = useAuth();
   const { isAdmin, loading: roleLoading } = useUserRole();
-  const [formData, setFormData] = useState<CarFormData>(initialFormData);
+  const [formData, setFormData] = useState<VehicleFormData | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loadingVehicle, setLoadingVehicle] = useState(true);
 
-  // Set default end time to 7 days from now
+  // Fetch vehicle data
   useEffect(() => {
-    const defaultEndTime = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-    setFormData(prev => ({
-      ...prev,
-      endTime: defaultEndTime.toISOString().slice(0, 16)
-    }));
-  }, []);
+    const fetchVehicle = async () => {
+      if (!id) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from("vehicles")
+          .select("*")
+          .eq("id", id)
+          .maybeSingle();
+
+        if (error) throw error;
+        if (!data) {
+          toast.error("Vehicle not found");
+          navigate("/auctions");
+          return;
+        }
+
+        setFormData({
+          year: data.year.toString(),
+          make: data.make,
+          model: data.model,
+          vin: data.vin || "",
+          mileage: data.mileage.toString(),
+          exterior: data.exterior || "",
+          interior: data.interior || "",
+          engine: data.engine || "",
+          transmission: data.transmission,
+          condition: data.condition || "good",
+          location: data.location,
+          description: data.description || "",
+          currentBid: data.current_bid.toString(),
+          endTime: new Date(data.end_time).toISOString().slice(0, 16),
+          isLive: data.is_live,
+          isFeatured: data.is_featured,
+          images: data.images.length > 0 ? data.images : [""],
+          vehicleType: (data as any).vehicle_type || "car",
+        });
+      } catch (error: any) {
+        console.error("Error fetching vehicle:", error);
+        toast.error("Failed to load vehicle");
+      } finally {
+        setLoadingVehicle(false);
+      }
+    };
+
+    fetchVehicle();
+  }, [id, navigate]);
 
   // Redirect if not authenticated
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
-      toast.error("Please login to add vehicles");
+      toast.error("Please login to edit vehicles");
       navigate("/auth");
     }
   }, [authLoading, isAuthenticated, navigate]);
 
-  const handleInputChange = (field: keyof CarFormData, value: string | boolean) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const handleInputChange = (field: keyof VehicleFormData, value: string | boolean) => {
+    setFormData((prev) => prev ? { ...prev, [field]: value } : prev);
   };
 
   const handleImageChange = (index: number, value: string) => {
+    if (!formData) return;
     const newImages = [...formData.images];
     newImages[index] = value;
-    setFormData((prev) => ({ ...prev, images: newImages }));
+    setFormData((prev) => prev ? { ...prev, images: newImages } : prev);
   };
 
   const addImageField = () => {
-    setFormData((prev) => ({ ...prev, images: [...prev.images, ""] }));
+    setFormData((prev) => prev ? { ...prev, images: [...prev.images, ""] } : prev);
   };
 
   const removeImageField = (index: number) => {
-    if (formData.images.length > 1) {
-      const newImages = formData.images.filter((_, i) => i !== index);
-      setFormData((prev) => ({ ...prev, images: newImages }));
-    }
+    if (!formData || formData.images.length <= 1) return;
+    const newImages = formData.images.filter((_, i) => i !== index);
+    setFormData((prev) => prev ? { ...prev, images: newImages } : prev);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData || !id) return;
+    
     setIsSubmitting(true);
 
     // Validate required fields
@@ -117,62 +141,54 @@ const AddCar = () => {
     }
 
     try {
-      // const validImages = formData.images.filter(img => img.trim() !== "");
-      // const mainImage = validImages[0] || "/placeholder.svg";
       const makePath = formData.make.toLowerCase().replace(/\s+/g, '-');
       const validImages = formData.images
         .filter(img => img.trim() !== "")
         .map(img => {
-          // Strip extension if user added one
+          if (img.startsWith('/') || img.startsWith('http')) return img;
           const filename = img.replace(/\.(jpg|jpeg|png|webp)$/i, '');
-          // Always construct the full path
           return `/assets/imgs/${makePath}/${filename}.jpg`;
         });
       const mainImage = validImages[0] || "/placeholder.svg";
 
-
-      const { error } = await supabase.from("vehicles").insert({
-        year: parseInt(formData.year),
-        make: formData.make,
-        model: formData.model,
-        vin: formData.vin || null,
-        mileage: parseInt(formData.mileage) || 0,
-        exterior: formData.exterior || null,
-        interior: formData.interior || null,
-        engine: formData.engine || null,
-        transmission: formData.transmission,
-        condition: formData.condition,
-        location: formData.location,
-        description: formData.description || null,
-        current_bid: parseInt(formData.currentBid) || 0,
-        end_time: new Date(formData.endTime).toISOString(),
-        is_live: formData.isLive,
-        is_featured: formData.isFeatured,
-        image: mainImage,
-        images: validImages.length > 0 ? validImages : [mainImage],
-        bid_count: 0,
-        vehicle_type: formData.vehicleType,
-      } as any);
+      const { error } = await supabase
+        .from("vehicles")
+        .update({
+          year: parseInt(formData.year),
+          make: formData.make,
+          model: formData.model,
+          vin: formData.vin || null,
+          mileage: parseInt(formData.mileage) || 0,
+          exterior: formData.exterior || null,
+          interior: formData.interior || null,
+          engine: formData.engine || null,
+          transmission: formData.transmission,
+          condition: formData.condition,
+          location: formData.location,
+          description: formData.description || null,
+          current_bid: parseInt(formData.currentBid) || 0,
+          end_time: new Date(formData.endTime).toISOString(),
+          is_live: formData.isLive,
+          is_featured: formData.isFeatured,
+          image: mainImage,
+          images: validImages.length > 0 ? validImages : [mainImage],
+          vehicle_type: formData.vehicleType,
+        } as any)
+        .eq("id", id);
 
       if (error) throw error;
 
-      toast.success("Vehicle added successfully!");
-      setFormData(initialFormData);
-      navigate("/auctions");
+      toast.success("Vehicle updated successfully!");
+      navigate(`/car/${id}`);
     } catch (error: any) {
-      console.error("Error adding vehicle:", error);
-      toast.error(error.message || "Failed to add vehicle");
+      console.error("Error updating vehicle:", error);
+      toast.error(error.message || "Failed to update vehicle");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleReset = () => {
-    setFormData(initialFormData);
-    toast.info("Form reset");
-  };
-
-  if (authLoading || roleLoading) {
+  if (authLoading || roleLoading || loadingVehicle) {
     return (
       <Layout>
         <div className="flex items-center justify-center min-h-screen">
@@ -194,7 +210,7 @@ const AddCar = () => {
               </div>
               <CardTitle className="text-2xl">Access Denied</CardTitle>
               <CardDescription>
-                Only administrators can add new vehicles to the auction.
+                Only administrators can edit vehicles.
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">
@@ -203,6 +219,16 @@ const AddCar = () => {
               </Button>
             </CardContent>
           </Card>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!formData) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-screen">
+          <p className="text-muted-foreground">Vehicle not found</p>
         </div>
       </Layout>
     );
@@ -218,8 +244,8 @@ const AddCar = () => {
                 <Car className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <CardTitle className="text-2xl">Add New Vehicle</CardTitle>
-                <CardDescription>Enter the vehicle details below to add it to the auction</CardDescription>
+                <CardTitle className="text-2xl">Edit Vehicle</CardTitle>
+                <CardDescription>Update the vehicle details below</CardDescription>
               </div>
             </div>
           </CardHeader>
@@ -379,7 +405,7 @@ const AddCar = () => {
                 <h3 className="text-lg font-semibold border-b pb-2">Auction Settings</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="currentBid">Starting Bid (R)</Label>
+                    <Label htmlFor="currentBid">Current Bid (R)</Label>
                     <Input
                       id="currentBid"
                       type="number"
@@ -402,7 +428,7 @@ const AddCar = () => {
                   <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
                     <div>
                       <Label htmlFor="isLive" className="text-base">Live Auction</Label>
-                      <p className="text-sm text-muted-foreground">Make this auction live immediately</p>
+                      <p className="text-sm text-muted-foreground">Make this auction live</p>
                     </div>
                     <Switch
                       id="isLive"
@@ -475,16 +501,16 @@ const AddCar = () => {
                   {isSubmitting ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Adding Vehicle...
+                      Saving...
                     </>
                   ) : (
-                    "Add Vehicle"
+                    <>
+                      <Save className="w-4 h-4 mr-2" />
+                      Save Changes
+                    </>
                   )}
                 </Button>
-                <Button type="button" variant="outline" onClick={handleReset}>
-                  Reset Form
-                </Button>
-                <Button type="button" variant="ghost" onClick={() => navigate("/auctions")}>
+                <Button type="button" variant="outline" onClick={() => navigate(-1)}>
                   Cancel
                 </Button>
               </div>
@@ -496,4 +522,4 @@ const AddCar = () => {
   );
 };
 
-export default AddCar;
+export default EditVehicle;
