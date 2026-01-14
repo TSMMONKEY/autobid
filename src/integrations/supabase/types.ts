@@ -122,6 +122,7 @@ export type Database = {
           model: string
           transmission: string
           updated_at: string
+          vehicle_type: string
           vin: string | null
           year: number
         }
@@ -146,6 +147,7 @@ export type Database = {
           model: string
           transmission?: string
           updated_at?: string
+          vehicle_type?: string
           vin?: string | null
           year: number
         }
@@ -170,6 +172,7 @@ export type Database = {
           model?: string
           transmission?: string
           updated_at?: string
+          vehicle_type?: string
           vin?: string | null
           year?: number
         }

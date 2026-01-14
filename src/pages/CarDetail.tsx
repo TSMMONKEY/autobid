@@ -1,11 +1,12 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
-import { ArrowLeft, Clock, MapPin, Gauge, Key, Zap, AlertTriangle, Radio, Users } from "lucide-react";
+import { ArrowLeft, Clock, MapPin, Gauge, Key, Zap, AlertTriangle, Radio, Users, Pencil } from "lucide-react";
 import { useRealtimeVehicle } from "@/hooks/useRealtimeVehicle";
 import { useBids } from "@/hooks/useBids";
+import { useUserRole } from "@/hooks/useUserRole";
 import LiveBidForm from "@/components/LiveBidForm";
 import BidHistory from "@/components/BidHistory";
 import WatchlistButton from "@/components/WatchlistButton";
@@ -17,6 +18,7 @@ const CarDetail = () => {
   const navigate = useNavigate();
   const { car, loading, error } = useRealtimeVehicle(id);
   const { bids } = useBids(id);
+  const { isAdmin } = useUserRole();
 
   if (loading) {
     return (
@@ -47,14 +49,23 @@ const CarDetail = () => {
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8 pt-24">
-        <Button
-          variant="ghost"
-          onClick={() => navigate(-1)}
-          className="mb-6"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to results
-        </Button>
+        <div className="flex items-center justify-between mb-6">
+          <Button
+            variant="ghost"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to results
+          </Button>
+          {isAdmin && (
+            <Link to={`/admin/edit-vehicle/${car.id}`}>
+              <Button variant="outline">
+                <Pencil className="w-4 h-4 mr-2" />
+                Edit Vehicle
+              </Button>
+            </Link>
+          )}
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Car Images */}
