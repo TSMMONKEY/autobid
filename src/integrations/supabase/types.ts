@@ -79,6 +79,48 @@ export type Database = {
         }
         Relationships: []
       }
+      user_registration: {
+        Row: {
+          address_complete: boolean
+          contact_complete: boolean
+          created_at: string
+          deposit_amount: number | null
+          deposit_paid: boolean
+          id: string
+          identification_complete: boolean
+          privacy_accepted: boolean
+          terms_accepted: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address_complete?: boolean
+          contact_complete?: boolean
+          created_at?: string
+          deposit_amount?: number | null
+          deposit_paid?: boolean
+          id?: string
+          identification_complete?: boolean
+          privacy_accepted?: boolean
+          terms_accepted?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address_complete?: boolean
+          contact_complete?: boolean
+          created_at?: string
+          deposit_amount?: number | null
+          deposit_paid?: boolean
+          id?: string
+          identification_complete?: boolean
+          privacy_accepted?: boolean
+          terms_accepted?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
