@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useBids } from "@/hooks/useBids";
 import { useAuth } from "@/hooks/useAuth";
-import { Loader2, Lock } from "lucide-react";
+import { useRegistrationStatus } from "@/hooks/useRegistrationStatus";
+import { Loader2, Lock, AlertCircle } from "lucide-react";
 
 interface LiveBidFormProps {
   vehicleId: string;
@@ -17,6 +18,7 @@ const LiveBidForm = ({ vehicleId, currentBid, isLive }: LiveBidFormProps) => {
   const [bidError, setBidError] = useState("");
   const { placeBid, placingBid } = useBids(vehicleId);
   const { user, isAuthenticated } = useAuth();
+  const { canBid, incompleteItems, loading: registrationLoading } = useRegistrationStatus();
   const navigate = useNavigate();
 
   const minimumBid = currentBid + 100;
@@ -72,6 +74,31 @@ const LiveBidForm = ({ vehicleId, currentBid, isLive }: LiveBidFormProps) => {
         <Button className="w-full" onClick={() => navigate("/auth")}>
           Login to Bid
         </Button>
+      </div>
+    );
+  }
+
+  // Show registration incomplete message
+  if (!registrationLoading && !canBid) {
+    return (
+      <div className="space-y-3 p-4 bg-amber-500/10 rounded-lg border border-amber-500/30">
+        <div className="flex items-center gap-2 text-amber-600">
+          <AlertCircle className="w-5 h-5" />
+          <span className="font-semibold">Complete Registration to Bid</span>
+        </div>
+        <div className="space-y-1 text-sm">
+          {incompleteItems.slice(0, 3).map((item) => (
+            <p key={item.key} className="text-muted-foreground">• {item.label}</p>
+          ))}
+          {incompleteItems.length > 3 && (
+            <p className="text-muted-foreground">• +{incompleteItems.length - 3} more...</p>
+          )}
+        </div>
+        <Link to="/profile">
+          <Button className="w-full" variant="default">
+            Complete Registration
+          </Button>
+        </Link>
       </div>
     );
   }

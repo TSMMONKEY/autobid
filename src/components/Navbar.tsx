@@ -2,8 +2,9 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Menu, X, User, Car, LogOut, LayoutDashboard, Settings } from "lucide-react";
+import { Search, Menu, X, User, Car, LogOut, LayoutDashboard, Settings, Plus } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useUserRole } from "@/hooks/useUserRole";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +20,7 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isAuthenticated, loading, signOut } = useAuth();
+  const { isAdmin } = useUserRole();
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -136,12 +138,14 @@ const Navbar = () => {
                       Profile
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/admin/add-car" className="cursor-pointer">
-                      <Settings className="mr-2 h-4 w-4" />
-                      Add Car
-                    </Link>
-                  </DropdownMenuItem>
+                  {isAdmin && (
+                    <DropdownMenuItem asChild>
+                      <Link to="/admin/add-car" className="cursor-pointer">
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add Car
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive">
                     <LogOut className="mr-2 h-4 w-4" />
@@ -228,12 +232,14 @@ const Navbar = () => {
                           Profile
                         </Button>
                       </Link>
-                      <Link to="/admin/add-car" onClick={() => setIsMenuOpen(false)}>
-                        <Button variant="ghost" className="w-full justify-start">
-                          <Settings className="mr-2 h-4 w-4" />
-                          Add Car
-                        </Button>
-                      </Link>
+                      {isAdmin && (
+                        <Link to="/admin/add-car" onClick={() => setIsMenuOpen(false)}>
+                          <Button variant="ghost" className="w-full justify-start">
+                            <Plus className="mr-2 h-4 w-4" />
+                            Add Car
+                          </Button>
+                        </Link>
+                      )}
                       <Button 
                         variant="destructive" 
                         className="w-full justify-start"
