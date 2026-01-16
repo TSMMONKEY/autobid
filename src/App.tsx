@@ -27,6 +27,12 @@ import Shipping from "./pages/Shipping";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import ActivateBidding from "./pages/ActivateBidding";
+import MySales from "./pages/MySales";
+import Refunds from "./pages/Refunds";
+import SalesOrders from "./pages/SalesOrders";
+import SalesInvoices from "./pages/SalesInvoices";
+import Statement from "./pages/Statement";
+import BidHistoryPage from "./pages/BidHistoryPage";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +66,12 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/activate-bidding" element={<ActivateBidding />} />
+            <Route path="/my-sales" element={<MySales />} />
+            <Route path="/refunds" element={<Refunds />} />
+            <Route path="/sales-orders" element={<SalesOrders />} />
+            <Route path="/sales-invoices" element={<SalesInvoices />} />
+            <Route path="/statement" element={<Statement />} />
+            <Route path="/bid-history" element={<BidHistoryPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

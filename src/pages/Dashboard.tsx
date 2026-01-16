@@ -241,14 +241,14 @@ const Dashboard = () => {
   ];
 
   const menuItems = [
-    { label: "My Sales", icon: ShoppingCart, description: "View your sold vehicles" },
+    { label: "My Sales", icon: ShoppingCart, description: "View your won vehicles", link: "/my-sales" },
     { label: "Registration Status", icon: User, description: "Complete your profile", link: "/profile" },
     { label: "Deposit", icon: CreditCard, description: "Manage your deposit", link: "/activate-bidding" },
-    { label: "Refunds", icon: RefreshCw, description: "View refund requests" },
-    { label: "Current Sales Orders", icon: ShoppingCart, description: "Active sales orders" },
-    { label: "Sales Invoices", icon: Receipt, description: "View your invoices" },
-    { label: "Statement", icon: ScrollText, description: "Account statement" },
-    { label: "Bid History", icon: History, description: "All your bids", active: true },
+    { label: "Refunds", icon: RefreshCw, description: "View refund requests", link: "/refunds" },
+    { label: "Current Sales Orders", icon: ShoppingCart, description: "Active sales orders", link: "/sales-orders" },
+    { label: "Sales Invoices", icon: Receipt, description: "View your invoices", link: "/sales-invoices" },
+    { label: "Statement", icon: ScrollText, description: "Account statement", link: "/statement" },
+    { label: "Bid History", icon: History, description: "All your bids", link: "/bid-history" },
   ];
 
   return (
