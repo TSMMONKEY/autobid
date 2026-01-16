@@ -14,6 +14,41 @@ export type Database = {
   }
   public: {
     Tables: {
+      auction_queue: {
+        Row: {
+          created_at: string
+          id: string
+          position: number
+          scheduled_time: string | null
+          updated_at: string
+          vehicle_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          position: number
+          scheduled_time?: string | null
+          updated_at?: string
+          vehicle_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          position?: number
+          scheduled_time?: string | null
+          updated_at?: string
+          vehicle_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "auction_queue_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: true
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bids: {
         Row: {
           amount: number
@@ -42,6 +77,59 @@ export type Database = {
             columns: ["vehicle_id"]
             isOneToOne: false
             referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          amount: number
+          created_at: string
+          due_date: string | null
+          id: string
+          invoice_number: string
+          paid_date: string | null
+          sale_id: string | null
+          status: string
+          tax_amount: number | null
+          total_amount: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          invoice_number: string
+          paid_date?: string | null
+          sale_id?: string | null
+          status?: string
+          tax_amount?: number | null
+          total_amount: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          invoice_number?: string
+          paid_date?: string | null
+          sale_id?: string | null
+          status?: string
+          tax_amount?: number | null
+          total_amount?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
             referencedColumns: ["id"]
           },
         ]
@@ -75,6 +163,122 @@ export type Database = {
           id?: string
           phone?: string | null
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      refunds: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          processed_date: string | null
+          reason: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          processed_date?: string | null
+          reason?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          processed_date?: string | null
+          reason?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      sales: {
+        Row: {
+          buyer_id: string
+          created_at: string
+          delivery_date: string | null
+          id: string
+          invoice_number: string | null
+          payment_date: string | null
+          sale_amount: number
+          seller_id: string | null
+          status: string
+          updated_at: string
+          vehicle_id: string
+        }
+        Insert: {
+          buyer_id: string
+          created_at?: string
+          delivery_date?: string | null
+          id?: string
+          invoice_number?: string | null
+          payment_date?: string | null
+          sale_amount: number
+          seller_id?: string | null
+          status?: string
+          updated_at?: string
+          vehicle_id: string
+        }
+        Update: {
+          buyer_id?: string
+          created_at?: string
+          delivery_date?: string | null
+          id?: string
+          invoice_number?: string | null
+          payment_date?: string | null
+          sale_amount?: number
+          seller_id?: string | null
+          status?: string
+          updated_at?: string
+          vehicle_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transactions: {
+        Row: {
+          amount: number
+          balance_after: number | null
+          created_at: string
+          description: string | null
+          id: string
+          reference_id: string | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          balance_after?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          reference_id?: string | null
+          type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          balance_after?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          reference_id?: string | null
+          type?: string
           user_id?: string
         }
         Relationships: []
@@ -144,6 +348,8 @@ export type Database = {
       }
       vehicles: {
         Row: {
+          auction_duration_minutes: number | null
+          auction_status: string
           bid_count: number
           condition: string | null
           created_at: string
@@ -166,9 +372,13 @@ export type Database = {
           updated_at: string
           vehicle_type: string
           vin: string | null
+          winner_id: string | null
+          winning_bid: number | null
           year: number
         }
         Insert: {
+          auction_duration_minutes?: number | null
+          auction_status?: string
           bid_count?: number
           condition?: string | null
           created_at?: string
@@ -191,9 +401,13 @@ export type Database = {
           updated_at?: string
           vehicle_type?: string
           vin?: string | null
+          winner_id?: string | null
+          winning_bid?: number | null
           year: number
         }
         Update: {
+          auction_duration_minutes?: number | null
+          auction_status?: string
           bid_count?: number
           condition?: string | null
           created_at?: string
@@ -216,6 +430,8 @@ export type Database = {
           updated_at?: string
           vehicle_type?: string
           vin?: string | null
+          winner_id?: string | null
+          winning_bid?: number | null
           year?: number
         }
         Relationships: []
@@ -254,6 +470,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      end_auction: { Args: { vehicle_uuid: string }; Returns: undefined }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
