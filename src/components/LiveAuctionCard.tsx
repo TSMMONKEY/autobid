@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
-import { Clock, Users, Gavel, Radio } from "lucide-react";
+import { Clock, Users, Gavel, Radio, History } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import CountdownTimer from "./CountdownTimer";
 import LiveBidForm from "./LiveBidForm";
+import BidHistory from "./BidHistory";
 import { useAuctionTimer } from "@/hooks/useAuctionTimer";
 import type { AuctionVehicle } from "@/hooks/useRealtimeAuctions";
 
@@ -47,7 +48,7 @@ const LiveAuctionCard = ({ vehicle, onAuctionEnd }: LiveAuctionCardProps) => {
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6 p-6">
+      <div className="grid lg:grid-cols-3 gap-6 p-6">
         {/* Image */}
         <Link to={`/car/${vehicle.id}`} className="block">
           <div className="relative aspect-[4/3] overflow-hidden rounded-xl">
@@ -106,6 +107,15 @@ const LiveAuctionCard = ({ vehicle, onAuctionEnd }: LiveAuctionCardProps) => {
               isLive={vehicle.is_live}
             />
           </div>
+        </div>
+
+        {/* Bid History Panel */}
+        <div className="bg-secondary/30 rounded-xl p-4 border border-border">
+          <div className="flex items-center gap-2 mb-4 pb-3 border-b border-border">
+            <History className="w-5 h-5 text-primary" />
+            <h3 className="font-semibold text-foreground">Live Bid Activity</h3>
+          </div>
+          <BidHistory vehicleId={vehicle.id} />
         </div>
       </div>
     </div>
