@@ -11,6 +11,7 @@ import LiveBidForm from "@/components/LiveBidForm";
 import BidHistory from "@/components/BidHistory";
 import WatchlistButton from "@/components/WatchlistButton";
 import CountdownTimer from "@/components/CountdownTimer";
+import CarDetailCarousel from "@/components/CarDetailCarousel";
 import Layout from "@/components/Layout";
 
 const CarDetail = () => {
@@ -70,7 +71,7 @@ const CarDetail = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Car Images */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="relative bg-muted rounded-xl overflow-hidden aspect-video">
+            <div className="relative">
               {car.isLive && (
                 <div className="absolute top-4 left-4 z-10 flex items-center gap-2 bg-destructive text-destructive-foreground px-3 py-1.5 rounded-full">
                   <Radio className="w-4 h-4 animate-pulse" />
@@ -80,33 +81,8 @@ const CarDetail = () => {
               <div className="absolute top-4 right-4 z-10">
                 <WatchlistButton vehicleId={car.id} />
               </div>
-              <img
-                src={car.image}
-                alt={`${car.year} ${car.make} ${car.model}`}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = '/placeholder.svg';
-                }}
-              />
+              <CarDetailCarousel images={car.images || [car.image]} alt={`${car.year} ${car.make} ${car.model}`} />
             </div>
-            
-            {/* Additional images */}
-            {car.images && car.images.length > 1 && (
-              <div className="grid grid-cols-4 gap-2">
-                {car.images.slice(0, 4).map((img, index) => (
-                  <div key={index} className="aspect-video bg-muted rounded-lg overflow-hidden">
-                    <img
-                      src={img}
-                      alt={`${car.year} ${car.make} ${car.model} - ${index + 1}`}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = '/placeholder.svg';
-                      }}
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
 
             {/* Bid History */}
             <Card>
