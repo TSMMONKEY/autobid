@@ -1,13 +1,14 @@
 import { useState, useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, Grid3X3, List, ChevronLeft, ChevronRight, AlertTriangle, Users, FileCheck } from "lucide-react";
-import { taxis, Taxi } from "@/data/taxis";
+import { Search, Grid3X3, List, ChevronLeft, ChevronRight, AlertTriangle, Users, FileCheck, Loader2 } from "lucide-react";
 import CountdownTimer from "@/components/CountdownTimer";
+import { supabase } from "@/integrations/supabase/client";
 
 const Taxis = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -17,10 +18,25 @@ const Taxis = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const taxisPerPage = 20;
 
+  // Fetch taxis from database
+  const { data: taxis = [], isLoading } = useQuery({
+    queryKey: ['taxis'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('vehicles')
+        .select('*')
+        .eq('vehicle_type', 'taxi')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      return data || [];
+    }
+  });
+
   const makes = useMemo(() => {
     const uniqueMakes = [...new Set(taxis.map(taxi => taxi.make))];
     return uniqueMakes.sort();
-  }, []);
+  }, [taxis]);
 
   const filteredTaxis = useMemo(() => {
     return taxis.filter(taxi => {
@@ -31,7 +47,7 @@ const Taxis = () => {
       const matchesCondition = selectedCondition === "all" || taxi.condition === selectedCondition;
       return matchesSearch && matchesMake && matchesCondition;
     });
-  }, [searchQuery, selectedMake, selectedCondition]);
+  }, [taxis, searchQuery, selectedMake, selectedCondition]);
 
   const totalPages = Math.ceil(filteredTaxis.length / taxisPerPage);
   const paginatedTaxis = filteredTaxis.slice(
@@ -39,15 +55,15 @@ const Taxis = () => {
     currentPage * taxisPerPage
   );
 
-  const getConditionBadge = (condition: Taxi["condition"]) => {
-    const styles = {
+  const getConditionBadge = (condition: string | null) => {
+    const styles: Record<string, string> = {
       excellent: "bg-green-500/20 text-green-700 border-green-500/30",
       good: "bg-blue-500/20 text-blue-700 border-blue-500/30",
       fair: "bg-yellow-500/20 text-yellow-700 border-yellow-500/30",
       crashed: "bg-orange-500/20 text-orange-700 border-orange-500/30",
       salvage: "bg-red-500/20 text-red-700 border-red-500/30",
     };
-    return styles[condition];
+    return styles[condition || 'fair'] || styles.fair;
   };
 
   return (
@@ -125,142 +141,151 @@ const Taxis = () => {
             </div>
           </div>
 
-          {/* Results Count */}
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-muted-foreground text-sm">
-              Showing {paginatedTaxis.length} of {filteredTaxis.length} taxis
-            </p>
-            <p className="text-muted-foreground text-sm">
-              Page {currentPage} of {totalPages}
-            </p>
-          </div>
-
-          {/* Taxis Grid */}
-          <div className={`grid gap-4 ${viewMode === "grid" ? "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5" : "grid-cols-1"}`}>
-            {paginatedTaxis.map((taxi) => (
-              <Link
-                key={taxi.id}
-                to={`/taxi/${taxi.id}`}
-                className={`group bg-card rounded-xl overflow-hidden border border-border hover:border-primary/50 transition-all duration-300 hover-lift shadow-card ${
-                  viewMode === "list" ? "flex" : ""
-                }`}
-              >
-                {/* Image */}
-                <div className={`relative overflow-hidden ${viewMode === "list" ? "w-48 flex-shrink-0" : "aspect-[4/3]"}`}>
-                  <img
-                    src={taxi.image}
-                    alt={`${taxi.year} ${taxi.make} ${taxi.model}`}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  
-                  {/* Condition Badge */}
-                  <div className="absolute top-2 left-2">
-                    <Badge className={`${getConditionBadge(taxi.condition)} text-xs`}>
-                      {(taxi.condition === "crashed" || taxi.condition === "salvage") && (
-                        <AlertTriangle className="w-3 h-3 mr-1" />
-                      )}
-                      {taxi.condition}
-                    </Badge>
-                  </div>
-
-                  {/* Live Badge */}
-                  {taxi.isLive && (
-                    <div className="absolute top-2 right-2">
-                      <Badge className="bg-red-500 text-white text-xs animate-pulse">
-                        LIVE
-                      </Badge>
-                    </div>
-                  )}
-
-                  {/* License Badge */}
-                  {taxi.operatingLicense && (
-                    <div className="absolute bottom-2 left-2">
-                      <Badge className="bg-primary/90 text-primary-foreground text-xs">
-                        <FileCheck className="w-3 h-3 mr-1" />
-                        Licensed
-                      </Badge>
-                    </div>
-                  )}
-                </div>
-
-                {/* Content */}
-                <div className={`p-3 ${viewMode === "list" ? "flex-1 flex flex-col justify-between" : ""}`}>
-                  <div>
-                    <h3 className="font-display font-bold text-foreground text-sm group-hover:text-primary transition-colors line-clamp-1">
-                      {taxi.year} {taxi.make} {taxi.model}
-                    </h3>
-                    
-                    <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-                      <Users className="w-3 h-3" />
-                      <span>{taxi.seatingCapacity} Seater</span>
-                      <span>•</span>
-                      <span>{taxi.mileage.toLocaleString()} km</span>
-                    </div>
-                  </div>
-
-                  <div className="mt-2 pt-2 border-t border-border">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-xs text-muted-foreground">Current Bid</p>
-                        <p className="font-bold text-primary text-sm">
-                          R {taxi.currentBid.toLocaleString("en-ZA")}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs text-muted-foreground">Ends in</p>
-                        <CountdownTimer endTime={taxi.endTime} compact />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-8">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </Button>
-              
-              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                let pageNum;
-                if (totalPages <= 5) {
-                  pageNum = i + 1;
-                } else if (currentPage <= 3) {
-                  pageNum = i + 1;
-                } else if (currentPage >= totalPages - 2) {
-                  pageNum = totalPages - 4 + i;
-                } else {
-                  pageNum = currentPage - 2 + i;
-                }
-                return (
-                  <Button
-                    key={pageNum}
-                    variant={currentPage === pageNum ? "green" : "outline"}
-                    size="icon"
-                    onClick={() => setCurrentPage(pageNum)}
-                  >
-                    {pageNum}
-                  </Button>
-                );
-              })}
-              
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-              >
-                <ChevronRight className="w-4 h-4" />
-              </Button>
+          {/* Loading State */}
+          {isLoading && (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+              <span className="ml-2 text-muted-foreground">Loading taxis...</span>
             </div>
+          )}
+
+          {/* Empty State */}
+          {!isLoading && taxis.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground text-lg">No taxis available yet.</p>
+              <p className="text-muted-foreground text-sm mt-2">Check back soon for new listings!</p>
+            </div>
+          )}
+
+          {/* Results Count */}
+          {!isLoading && taxis.length > 0 && (
+            <>
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-muted-foreground text-sm">
+                  Showing {paginatedTaxis.length} of {filteredTaxis.length} taxis
+                </p>
+                <p className="text-muted-foreground text-sm">
+                  Page {currentPage} of {Math.max(1, totalPages)}
+                </p>
+              </div>
+
+              {/* Taxis Grid */}
+              <div className={`grid gap-4 ${viewMode === "grid" ? "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5" : "grid-cols-1"}`}>
+                {paginatedTaxis.map((taxi) => (
+                  <Link
+                    key={taxi.id}
+                    to={`/taxi/${taxi.id}`}
+                    className={`group bg-card rounded-xl overflow-hidden border border-border hover:border-primary/50 transition-all duration-300 hover-lift shadow-card ${
+                      viewMode === "list" ? "flex" : ""
+                    }`}
+                  >
+                    {/* Image */}
+                    <div className={`relative overflow-hidden ${viewMode === "list" ? "w-48 flex-shrink-0" : "aspect-[4/3]"}`}>
+                      <img
+                        src={taxi.image}
+                        alt={`${taxi.year} ${taxi.make} ${taxi.model}`}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      
+                      {/* Condition Badge */}
+                      <div className="absolute top-2 left-2">
+                        <Badge className={`${getConditionBadge(taxi.condition)} text-xs`}>
+                          {(taxi.condition === "crashed" || taxi.condition === "salvage") && (
+                            <AlertTriangle className="w-3 h-3 mr-1" />
+                          )}
+                          {taxi.condition || 'fair'}
+                        </Badge>
+                      </div>
+
+                      {/* Live Badge */}
+                      {taxi.is_live && (
+                        <div className="absolute top-2 right-2">
+                          <Badge className="bg-red-500 text-white text-xs animate-pulse">
+                            LIVE
+                          </Badge>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Content */}
+                    <div className={`p-3 ${viewMode === "list" ? "flex-1 flex flex-col justify-between" : ""}`}>
+                      <div>
+                        <h3 className="font-display font-bold text-foreground text-sm group-hover:text-primary transition-colors line-clamp-1">
+                          {taxi.year} {taxi.make} {taxi.model}
+                        </h3>
+                        
+                        <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
+                          <span>{taxi.mileage.toLocaleString()} km</span>
+                          <span>•</span>
+                          <span>{taxi.location}</span>
+                        </div>
+                      </div>
+
+                      <div className="mt-2 pt-2 border-t border-border">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-xs text-muted-foreground">Current Bid</p>
+                            <p className="font-bold text-primary text-sm">
+                              R {taxi.current_bid.toLocaleString("en-ZA")}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xs text-muted-foreground">Ends in</p>
+                            <CountdownTimer endTime={new Date(taxi.end_time)} compact />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-2 mt-8">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </Button>
+                  
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNum;
+                    if (totalPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (currentPage <= 3) {
+                      pageNum = i + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNum = totalPages - 4 + i;
+                    } else {
+                      pageNum = currentPage - 2 + i;
+                    }
+                    return (
+                      <Button
+                        key={pageNum}
+                        variant={currentPage === pageNum ? "green" : "outline"}
+                        size="icon"
+                        onClick={() => setCurrentPage(pageNum)}
+                      >
+                        {pageNum}
+                      </Button>
+                    );
+                  })}
+                  
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </Button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
