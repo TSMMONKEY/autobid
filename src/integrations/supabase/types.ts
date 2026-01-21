@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      auction_events: {
+        Row: {
+          auction_date: string
+          created_at: string
+          description: string | null
+          id: string
+          status: string
+          title: string
+          updated_at: string
+          vehicle_types: string[]
+        }
+        Insert: {
+          auction_date: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          status?: string
+          title: string
+          updated_at?: string
+          vehicle_types?: string[]
+        }
+        Update: {
+          auction_date?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          vehicle_types?: string[]
+        }
+        Relationships: []
+      }
       auction_queue: {
         Row: {
           created_at: string
@@ -130,6 +163,41 @@ export type Database = {
             columns: ["sale_id"]
             isOneToOne: false
             referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pre_bids: {
+        Row: {
+          created_at: string
+          id: string
+          max_bid: number
+          updated_at: string
+          user_id: string
+          vehicle_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          max_bid: number
+          updated_at?: string
+          user_id: string
+          vehicle_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          max_bid?: number
+          updated_at?: string
+          user_id?: string
+          vehicle_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pre_bids_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
             referencedColumns: ["id"]
           },
         ]
@@ -348,7 +416,10 @@ export type Database = {
       }
       vehicles: {
         Row: {
+          asking_bid: number | null
           auction_duration_minutes: number | null
+          auction_event_id: string | null
+          auction_phase: string | null
           auction_status: string
           bid_count: number
           condition: string | null
@@ -365,6 +436,7 @@ export type Database = {
           is_featured: boolean
           is_live: boolean
           location: string
+          lot_number: number | null
           make: string
           mileage: number
           model: string
@@ -377,7 +449,10 @@ export type Database = {
           year: number
         }
         Insert: {
+          asking_bid?: number | null
           auction_duration_minutes?: number | null
+          auction_event_id?: string | null
+          auction_phase?: string | null
           auction_status?: string
           bid_count?: number
           condition?: string | null
@@ -394,6 +469,7 @@ export type Database = {
           is_featured?: boolean
           is_live?: boolean
           location?: string
+          lot_number?: number | null
           make: string
           mileage?: number
           model: string
@@ -406,7 +482,10 @@ export type Database = {
           year: number
         }
         Update: {
+          asking_bid?: number | null
           auction_duration_minutes?: number | null
+          auction_event_id?: string | null
+          auction_phase?: string | null
           auction_status?: string
           bid_count?: number
           condition?: string | null
@@ -423,6 +502,7 @@ export type Database = {
           is_featured?: boolean
           is_live?: boolean
           location?: string
+          lot_number?: number | null
           make?: string
           mileage?: number
           model?: string
@@ -434,7 +514,15 @@ export type Database = {
           winning_bid?: number | null
           year?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "vehicles_auction_event_id_fkey"
+            columns: ["auction_event_id"]
+            isOneToOne: false
+            referencedRelation: "auction_events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       watchlist: {
         Row: {

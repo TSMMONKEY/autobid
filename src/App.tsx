@@ -19,6 +19,9 @@ import TaxiDetail from "./pages/TaxiDetail";
 import AddCar from "./pages/AddCar";
 import EditVehicle from "./pages/EditVehicle";
 import AuctionQueueAdmin from "./pages/AuctionQueueAdmin";
+import AuctionEvents from "./pages/AuctionEvents";
+import AuctionEventDetail from "./pages/AuctionEventDetail";
+import AdminAuctionEvents from "./pages/AdminAuctionEvents";
 import NotFound from "./pages/NotFound";
 import FAQ from "./pages/FAQ";
 import Contact from "./pages/Contact";
@@ -60,6 +63,9 @@ const App = () => (
             <Route path="/admin/add-car" element={<AddCar />} />
             <Route path="/admin/edit-vehicle/:id" element={<EditVehicle />} />
             <Route path="/admin/auction-queue" element={<AuctionQueueAdmin />} />
+            <Route path="/admin/auction-events" element={<AdminAuctionEvents />} />
+            <Route path="/auction-events" element={<AuctionEvents />} />
+            <Route path="/auction-event/:id" element={<AuctionEventDetail />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/terms" element={<Terms />} />
