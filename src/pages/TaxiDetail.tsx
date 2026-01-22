@@ -14,25 +14,44 @@ import {
   AlertTriangle,
   FileCheck,
   Clock,
-  Gavel
+  Gavel,
+  Loader2
 } from "lucide-react";
-import { getTaxiById } from "@/data/taxis";
+import { useTaxi } from "@/hooks/useTaxi";
 import CountdownTimer from "@/components/CountdownTimer";
-import { useToast } from "@/hooks/use-toast";
+import { useBids } from "@/hooks/useBids";
+import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
+import { useNavigate } from "react-router-dom";
 
 const TaxiDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const taxi = getTaxiById(id || "");
-  const { toast } = useToast();
+  const { taxi, loading, error } = useTaxi(id || "");
+  const { user } = useAuth();
+  const { placeBid, loading: bidLoading } = useBids(id || "");
+  const navigate = useNavigate();
   const [bidAmount, setBidAmount] = useState("");
+  const [bidError, setBidError] = useState("");
 
-  if (!taxi) {
+  if (loading) {
+    return (
+      <Layout>
+        <div className="pt-24 pb-16 flex justify-center items-center min-h-[50vh]">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
+
+  if (error || !taxi) {
     return (
       <Layout>
         <div className="pt-24 pb-16 text-center">
           <h1 className="text-2xl font-bold text-foreground">Taxi Not Found</h1>
+          <p className="text-muted-foreground mt-2">
+            This taxi may have been removed or doesn't exist.
+          </p>
           <Link to="/taxis" className="text-primary hover:underline mt-4 inline-block">
             Back to Taxis
           </Link>
@@ -41,21 +60,26 @@ const TaxiDetail = () => {
     );
   }
 
-  const handleBid = () => {
-    const amount = parseInt(bidAmount.replace(/\D/g, ""));
-    if (amount <= taxi.currentBid) {
-      toast({
-        title: "Invalid Bid",
-        description: `Your bid must be higher than R ${taxi.currentBid.toLocaleString("en-ZA")}`,
-        variant: "destructive",
-      });
+  const handleBid = async () => {
+    if (!user) {
+      navigate("/auth");
       return;
     }
-    toast({
-      title: "Bid Placed Successfully!",
-      description: `You bid R ${amount.toLocaleString("en-ZA")} on this ${taxi.make} ${taxi.model}`,
-    });
-    setBidAmount("");
+
+    const amount = parseInt(bidAmount.replace(/\D/g, ""));
+    const minBid = taxi.currentBid + 100;
+
+    if (isNaN(amount) || amount < minBid) {
+      setBidError(`Minimum bid is R ${minBid.toLocaleString("en-ZA")}`);
+      return;
+    }
+
+    setBidError("");
+    const result = await placeBid(amount, user.id);
+    
+    if (result.success) {
+      setBidAmount("");
+    }
   };
 
   const getConditionBadge = (condition: string) => {
@@ -178,16 +202,28 @@ const TaxiDetail = () => {
                   <span>{taxi.bidCount} bids placed</span>
                 </div>
 
+                {bidError && (
+                  <p className="text-sm text-destructive mb-2">{bidError}</p>
+                )}
+
                 <div className="flex gap-2">
                   <Input
                     type="text"
-                    placeholder={`Min: R ${(taxi.currentBid + 1000).toLocaleString("en-ZA")}`}
+                    placeholder={`Min: R ${(taxi.currentBid + 100).toLocaleString("en-ZA")}`}
                     value={bidAmount}
                     onChange={(e) => setBidAmount(e.target.value)}
                     className="flex-1"
                   />
-                  <Button variant="green" onClick={handleBid}>
-                    Place Bid
+                  <Button 
+                    variant="green" 
+                    onClick={handleBid}
+                    disabled={bidLoading}
+                  >
+                    {bidLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      "Place Bid"
+                    )}
                   </Button>
                 </div>
               </div>
