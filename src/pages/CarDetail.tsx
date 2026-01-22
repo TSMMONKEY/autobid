@@ -3,10 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
-import { ArrowLeft, Clock, MapPin, Gauge, Key, Zap, AlertTriangle, Radio, Users, Pencil } from "lucide-react";
+import { ArrowLeft, Clock, MapPin, Gauge, Key, Zap, AlertTriangle, Radio, Users, Pencil, Calendar, Hash } from "lucide-react";
 import { useRealtimeVehicle } from "@/hooks/useRealtimeVehicle";
 import { useBids } from "@/hooks/useBids";
 import { useUserRole } from "@/hooks/useUserRole";
+
 import LiveBidForm from "@/components/LiveBidForm";
 import BidHistory from "@/components/BidHistory";
 import WatchlistButton from "@/components/WatchlistButton";
@@ -110,8 +111,34 @@ const CarDetail = () => {
             </Card>
           </div>
 
-          {/* Car Details */}
           <div className="space-y-6">
+            {/* Auction Event Banner */}
+            {car.auctionEvent && (
+              <Link to={`/auction-event/${car.auctionEvent.id}`}>
+                <Card className="bg-primary/5 border-primary/20 hover:bg-primary/10 transition-colors cursor-pointer">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Calendar className="w-5 h-5 text-primary" />
+                        <div>
+                          <p className="font-semibold text-primary">{car.auctionEvent.title}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {format(new Date(car.auctionEvent.auction_date), "EEEE, MMMM d, yyyy 'at' HH:mm")}
+                          </p>
+                        </div>
+                      </div>
+                      {car.lotNumber && (
+                        <Badge variant="outline" className="flex items-center gap-1">
+                          <Hash className="w-3 h-3" />
+                          Lot {car.lotNumber}
+                        </Badge>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            )}
+
             <div className="space-y-2">
               <div className="flex items-start justify-between">
                 <div>
@@ -128,12 +155,18 @@ const CarDetail = () => {
                 </Badge>
               </div>
 
-              <div className="flex items-center space-x-2 pt-2">
+              <div className="flex items-center flex-wrap gap-2 pt-2">
                 <Badge variant="outline" className="capitalize">
                   {car.condition}
                 </Badge>
                 {car.isFeatured && (
                   <Badge variant="secondary">Featured</Badge>
+                )}
+                {car.lotNumber && !car.auctionEvent && (
+                  <Badge variant="outline" className="flex items-center gap-1">
+                    <Hash className="w-3 h-3" />
+                    Lot {car.lotNumber}
+                  </Badge>
                 )}
               </div>
             </div>
@@ -159,6 +192,15 @@ const CarDetail = () => {
                     <p className="text-xl font-semibold">{car.bidCount} bids</p>
                   </div>
                 </div>
+
+                {car.askingBid && car.askingBid > 0 && (
+                  <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
+                    <p className="text-sm text-muted-foreground">Asking Bid</p>
+                    <p className="text-lg font-semibold text-amber-600">
+                      R{car.askingBid.toLocaleString()}
+                    </p>
+                  </div>
+                )}
 
                 {car.isLive && (
                   <div className="bg-muted/50 rounded-lg p-3">
