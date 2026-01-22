@@ -28,10 +28,27 @@ interface CarRow {
   primary_damage?: string;
   created_at?: string;
   updated_at?: string;
+  lot_number?: number | null;
+  asking_bid?: number | null;
+  auction_event_id?: string | null;
+  auction_phase?: string | null;
   [key: string]: any;
 }
 
-const transformCarRow = (row: CarRow): Car => ({
+export interface ExtendedCar extends Car {
+  lotNumber?: number | null;
+  askingBid?: number | null;
+  auctionEventId?: string | null;
+  auctionPhase?: string | null;
+  auctionEvent?: {
+    id: string;
+    title: string;
+    auction_date: string;
+    status: string;
+  } | null;
+}
+
+const transformCarRow = (row: CarRow, auctionEvent?: any): ExtendedCar => ({
   id: row.id,
   make: row.make,
   model: row.model,
@@ -55,12 +72,17 @@ const transformCarRow = (row: CarRow): Car => ({
   hasKey: row.has_key ?? true,
   engineStarts: row.engine_starts ?? true,
   primaryDamage: row.primary_damage ?? 'None',
+  lotNumber: row.lot_number,
+  askingBid: row.asking_bid,
+  auctionEventId: row.auction_event_id,
+  auctionPhase: row.auction_phase,
+  auctionEvent: auctionEvent || null,
   ...(row.created_at && { createdAt: new Date(row.created_at) }),
   ...(row.updated_at && { updatedAt: new Date(row.updated_at) }),
 });
 
 export const useRealtimeVehicle = (vehicleId?: string) => {
-  const [vehicle, setVehicle] = useState<Car | null>(null);
+  const [vehicle, setVehicle] = useState<ExtendedCar | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -69,10 +91,10 @@ export const useRealtimeVehicle = (vehicleId?: string) => {
       setLoading(true);
       setError(null);
 
-      // First, fetch the vehicle data
+      // Fetch vehicle with auction event data
       const { data, error: fetchError } = await supabase
         .from("vehicles")
-        .select("*")
+        .select("*, auction_events(*)")
         .eq("id", id)
         .single();
 
@@ -87,7 +109,8 @@ export const useRealtimeVehicle = (vehicleId?: string) => {
       }
 
       console.log('Fetched vehicle data:', data);
-      setVehicle(transformCarRow(data));
+      const auctionEvent = data.auction_events;
+      setVehicle(transformCarRow(data as unknown as CarRow, auctionEvent));
     } catch (err) {
       console.error("Error in fetchVehicle:", err);
       setError(
@@ -120,7 +143,8 @@ export const useRealtimeVehicle = (vehicleId?: string) => {
         },
         (payload) => {
           console.log('Received real-time update:', payload);
-          setVehicle(transformCarRow(payload.new as CarRow));
+          // Re-fetch to get updated auction event data
+          fetchVehicle(vehicleId);
         }
       )
       .subscribe(

@@ -1,33 +1,122 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { User, Mail, Phone, MapPin, Shield, Save, Camera } from "lucide-react";
+import { User, Mail, Phone, MapPin, Shield, Save, Camera, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
-    firstName: "John",
-    lastName: "Doe",
-    email: "john.doe@example.com",
-    phone: "+27 82 123 4567",
-    location: "Sandton, Johannesburg",
-    idNumber: "******* **** ***",
+    fullName: "",
+    email: "",
+    phone: "",
+    avatarUrl: "",
   });
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (!user) {
+          navigate("/auth");
+          return;
+        }
+
+        setUserId(user.id);
+
+        // Fetch profile from profiles table
+        const { data: profile, error } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("user_id", user.id)
+          .single();
+
+        if (error && error.code !== 'PGRST116') {
+          console.error("Error fetching profile:", error);
+        }
+
+        setFormData({
+          fullName: profile?.full_name || user.user_metadata?.full_name || "",
+          email: profile?.email || user.email || "",
+          phone: profile?.phone || "",
+          avatarUrl: profile?.avatar_url || "",
+        });
+      } catch (error) {
+        console.error("Error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserProfile();
+  }, [navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSave = () => {
-    toast({
-      title: "Profile Updated",
-      description: "Your changes have been saved successfully.",
-    });
-    setIsEditing(false);
+  const handleSave = async () => {
+    if (!userId) return;
+
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .upsert({
+          user_id: userId,
+          full_name: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          avatar_url: formData.avatarUrl,
+          updated_at: new Date().toISOString(),
+        }, { onConflict: 'user_id' });
+
+      if (error) throw error;
+
+      toast({
+        title: "Profile Updated",
+        description: "Your changes have been saved successfully.",
+      });
+      setIsEditing(false);
+    } catch (error: any) {
+      console.error("Error saving profile:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to save profile",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-screen">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
+
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
   };
 
   return (
@@ -52,16 +141,30 @@ const Profile = () => {
             <div className="bg-card rounded-xl p-8 border border-border shadow-card mb-8">
               <div className="flex items-center gap-6">
                 <div className="relative">
-                  <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center">
-                    <User className="w-12 h-12 text-primary" />
-                  </div>
+                  {formData.avatarUrl ? (
+                    <img
+                      src={formData.avatarUrl}
+                      alt="Profile"
+                      className="w-24 h-24 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center">
+                      {formData.fullName ? (
+                        <span className="text-2xl font-bold text-primary">
+                          {getInitials(formData.fullName)}
+                        </span>
+                      ) : (
+                        <User className="w-12 h-12 text-primary" />
+                      )}
+                    </div>
+                  )}
                   <button className="absolute bottom-0 right-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground shadow-lg hover:bg-primary/90 transition-colors">
                     <Camera className="w-4 h-4" />
                   </button>
                 </div>
                 <div>
                   <h2 className="font-display text-xl font-semibold">
-                    {formData.firstName} {formData.lastName}
+                    {formData.fullName || "Complete Your Profile"}
                   </h2>
                   <p className="text-muted-foreground">{formData.email}</p>
                   <div className="flex items-center gap-2 mt-2">
@@ -81,40 +184,31 @@ const Profile = () => {
                     Edit Profile
                   </Button>
                 ) : (
-                  <Button variant="green" onClick={handleSave}>
-                    <Save className="w-4 h-4" />
+                  <Button variant="green" onClick={handleSave} disabled={saving}>
+                    {saving ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Save className="w-4 h-4" />
+                    )}
                     Save Changes
                   </Button>
                 )}
               </div>
 
               <div className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="text-sm text-muted-foreground mb-2 block flex items-center gap-2">
-                      <User className="w-4 h-4" />
-                      First Name
-                    </label>
-                    <Input
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleChange}
-                      disabled={!isEditing}
-                      className="h-12"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm text-muted-foreground mb-2 block">
-                      Last Name
-                    </label>
-                    <Input
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleChange}
-                      disabled={!isEditing}
-                      className="h-12"
-                    />
-                  </div>
+                <div>
+                  <label className="text-sm text-muted-foreground mb-2 block flex items-center gap-2">
+                    <User className="w-4 h-4" />
+                    Full Name
+                  </label>
+                  <Input
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    disabled={!isEditing}
+                    className="h-12"
+                    placeholder="Enter your full name"
+                  />
                 </div>
 
                 <div>
@@ -126,10 +220,12 @@ const Profile = () => {
                     name="email"
                     type="email"
                     value={formData.email}
-                    onChange={handleChange}
-                    disabled={!isEditing}
-                    className="h-12"
+                    disabled
+                    className="h-12 bg-secondary"
                   />
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Email cannot be changed
+                  </p>
                 </div>
 
                 <div>
@@ -144,37 +240,8 @@ const Profile = () => {
                     onChange={handleChange}
                     disabled={!isEditing}
                     className="h-12"
+                    placeholder="+27 82 123 4567"
                   />
-                </div>
-
-                <div>
-                  <label className="text-sm text-muted-foreground mb-2 block flex items-center gap-2">
-                    <MapPin className="w-4 h-4" />
-                    Location
-                  </label>
-                  <Input
-                    name="location"
-                    value={formData.location}
-                    onChange={handleChange}
-                    disabled={!isEditing}
-                    className="h-12"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-sm text-muted-foreground mb-2 block flex items-center gap-2">
-                    <Shield className="w-4 h-4" />
-                    ID Number (Verified)
-                  </label>
-                  <Input
-                    name="idNumber"
-                    value={formData.idNumber}
-                    disabled
-                    className="h-12 bg-secondary"
-                  />
-                  <p className="text-xs text-muted-foreground mt-2">
-                    Contact support to update your ID information
-                  </p>
                 </div>
               </div>
             </div>
